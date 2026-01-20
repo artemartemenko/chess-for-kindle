@@ -65,10 +65,9 @@
             cursor: pointer;
             -webkit-tap-highlight-color: rgba(0,0,0,0.2);
             transition: none;
-            width: 80px;
-            flex: 0 0 80px;
+            width: 72px;
+            flex: 0 0 72px;
             text-align: center;
-            margin: 0 5px;
             line-height: 40px;
         }
 
@@ -122,8 +121,16 @@
         .game-area {
             display: flex;
             justify-content: center;
-            align-items: stretch;
+            align-items: center; /* Center vertically relative to side panel */
             width: 100%;
+        }
+
+        .main-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Width determined by board-container */
+            width: min-content; 
         }
 
         .side-panel {
@@ -134,6 +141,8 @@
             min-width: 35px;
             margin-right: 4px;
             flex-shrink: 0;
+            /* Match height of board + controls roughly, or just stretch */
+            align-self: stretch;
         }
 
         .captured-group {
@@ -282,12 +291,13 @@
             height: 12.5%;
             
             font-size: 40px; 
-            line-height: 0.8; 
+            line-height: 0.9; 
             text-align: center;
             pointer-events: none;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding-bottom: 1%; /* Nudge pieces up slightly */
         }
 
         .piece.white {
@@ -340,25 +350,25 @@
 </head>
 <body>
     <div class="container">
-        <div class="info">
-            <button id="backBtn" class="btn">&lt;</button>
-            <div class="status" id="status">White to move</div>
-            <button id="forwardBtn" class="btn">&gt;</button>
-        </div>
-        <div class="board-wrapper">
-            <div class="game-area">
-                <div class="side-panel">
-                    <div class="captured-group top" id="capturedTop"></div>
-                    <div class="captured-group bottom" id="capturedBottom"></div>
+        <div class="game-area">
+            <div class="side-panel">
+                <div class="captured-group top" id="capturedTop"></div>
+                <div class="captured-group bottom" id="capturedBottom"></div>
+            </div>
+            <div class="main-column">
+                <div class="info">
+                    <button id="backBtn" class="btn">&lt;</button>
+                    <div class="status" id="status">White to move</div>
+                    <button id="forwardBtn" class="btn">&gt;</button>
                 </div>
                 <div class="board-container">
                     <div class="board" id="board"></div>
                 </div>
-            </div>
-            <div class="info-bottom">
-                <button id="backBtnBottom" class="btn">&lt;</button>
-                <div class="status-bottom" id="statusBottom">White to move</div>
-                <button id="forwardBtnBottom" class="btn">&gt;</button>
+                <div class="info-bottom">
+                    <button id="backBtnBottom" class="btn">&lt;</button>
+                    <div class="status-bottom" id="statusBottom">White to move</div>
+                    <button id="forwardBtnBottom" class="btn">&gt;</button>
+                </div>
             </div>
         </div>
     </div>
