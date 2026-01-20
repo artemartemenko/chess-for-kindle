@@ -1,39 +1,38 @@
 # Chess for Kindle
 
-A simple, lightweight chess game optimized for E-Ink displays, specifically designed to be played by **two humans** on a single device (hotseat).
+A simple chess game for **two people on one Kindle**.
 
-🎮 **Play online:** [https://[YOUR_GITHUB_USERNAME].github.io/chess-for-kindle/](https://[YOUR_GITHUB_USERNAME].github.io/chess-for-kindle/)
+For quiet evenings at home, slow mornings in a cafe, park, or long trips where you just want something simple and real.
+No accounts. No AI. No distractions.  
+Just chess.
+
+## Why this exists
+
+eReader screens feel close to paper.  
+This project turns your Kindle into a minimal, paper-like chessboard you can share with another person.
+
+No menus to learn. No settings to tweak.  
+Just sit opposite each other and play.
 
 ## Features
 
-*   **Optimized for E-Ink:** High-contrast visuals, no animations, battery-friendly.
-*   **Two-Player Mode:** The interface rotates and adapts for players sitting opposite each other.
-*   **Touch Friendly:** Large touch zones and simplified controls for comfortable play on e-readers.
-*   **Offline Capable:** The entire game is a single HTML file. You can download it and copy it to your Kindle via USB to play offline (open it as a document).
-*   **Game Rules:** Full support for castling, en passant, promotion, and check/checkmate detection.
-*   **Material Count:** Tracks captured pieces and material advantage.
+- **Made for E-Ink:** High contrast, no animations, no flicker.
+- **Two humans, one device:** The board rotates automatically for face-to-face play.
+- **Lightweight & offline-friendly:** Loads fast, drains almost no battery.
 
 ## Compatibility
 
-This project has been tested and verified on:
-*   **Kindle Paperwhite 11 (11th Gen)**
+Tested on:
+- **Kindle Paperwhite 11 (11th Gen)**
 
-It should work on most other Kindle devices with a built-in browser (Experimental Browser), as well as any modern smartphone or tablet.
+Should work on most Kindles and other devices with a browser.
 
 ## How to Play
 
-1.  Open the link in your Kindle's "Web Browser" (usually found in the "Beta Features" or menu).
-2.  Tap on a piece to select it, then tap on a destination square to move.
-3.  Use the **<** and **>** buttons to undo/redo moves.
-4.  The board and controls are mirrored for the second player.
-
-## Installation (Offline)
-
-1.  Download the `index.html` file from this repository.
-2.  Connect your Kindle to your computer via USB.
-3.  Copy `index.html` to the root folder (or `documents` folder) of your Kindle.
-4.  Disconnect and open the file on your Kindle (it may appear in your library as a document).
+1. Open https://artemartemenko.github.io/chess-for-kindle/ in the Kindle Web Browser.
+2. Sit opposite each other.
+3. Make the first move.
 
 ## License
 
-MIT License. Free to use and modify.
+MIT — free to use, modify, and share.
