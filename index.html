@@ -292,13 +292,13 @@
             height: 12.5%;
             
             font-size: 40px; 
-            line-height: 0.9; 
+            line-height: 1; 
             text-align: center;
             pointer-events: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-bottom: 1%; /* Nudge pieces up slightly */
+            padding-bottom: 0.5%; /* Subtle lift for Kindle without breaking mobile */
         }
 
         .piece.white {
@@ -434,15 +434,13 @@
             
             saveState();
             renderBoard();
-            adjustPieceSize(); // Initial adjustment
+            adjustPieceSize();
             window.addEventListener('resize', adjustPieceSize);
         }
 
         function adjustPieceSize() {
-            // Calculate square size based on actual board width
             if (boardElement) {
                 var squareSize = boardElement.offsetWidth / 8;
-                // Set font size to ~80% of square size
                 var fontSize = Math.floor(squareSize * 0.8);
                 
                 var pieces = document.querySelectorAll('.piece');
@@ -450,7 +448,6 @@
                     pieces[i].style.fontSize = fontSize + 'px';
                 }
                 
-                // Store style for future pieces
                 var style = document.getElementById('dynamic-piece-style');
                 if (!style) {
                     style = document.createElement('style');
@@ -516,7 +513,6 @@
             updateCapturedPieces();
             updateButtons();
             
-            // Defer status update (checkmate calculation) to allow UI to render first
             setTimeout(updateStatus, 10);
         }
 
