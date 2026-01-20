@@ -130,7 +130,7 @@
         .game-area {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* Center vertically relative to side panel */
             width: 100%;
         }
 
@@ -153,13 +153,13 @@
         }
 
         .captured-group {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: auto auto; 
             align-items: center;
-            justify-content: start;
+            justify-content: center;
+            gap: 4px 2px; 
             flex: 1;
             padding: 5px 0;
-            gap: 3px;
         }
 
         .captured-group.top {
@@ -172,23 +172,23 @@
         }
 
         .captured-row {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            justify-content: center;
+            display: contents;
         }
 
         .captured-count {
             font-size: 18px;
             font-weight: bold;
             color: #333;
+            justify-self: end;
+            padding-right: 2px;
             line-height: 1;
         }
 
         .captured-symbol {
             font-size: 30px;
             line-height: 30px;
-            opacity: 1;
+            opacity: 1; 
+            justify-self: start;
         }
         
         .captured-symbol.white {
@@ -205,8 +205,12 @@
             font-weight: bold;
             color: #555;
             text-align: center;
+            grid-column: 1 / -1;
             margin-top: 5px;
-            width: 100%;
+        }
+        
+        .captured-group.top .score {
+            
         }
 
         .board-container {
