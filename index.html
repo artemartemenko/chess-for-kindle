@@ -156,16 +156,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: start;
             flex: 1;
             padding: 5px 0;
             gap: 3px;
         }
 
         .captured-group.top {
+            align-content: start;
             transform: rotate(180deg);
         }
 
+        .captured-group.bottom {
+            align-content: start;
+        }
 
         .captured-row {
             display: flex;
@@ -186,11 +190,10 @@
             line-height: 30px;
             opacity: 1;
         }
-
+        
         .captured-symbol.white {
             color: #fff !important;
-            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 
-                        1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
         }
 
         .captured-symbol.black {
