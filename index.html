@@ -158,12 +158,12 @@
 
         .captured-group {
             display: grid;
-            grid-template-columns: max-content max-content;
+            grid-template-columns: auto auto;  /* Замість max-content */
             align-items: center;
             justify-content: center;
+            gap: 4px 2px;  /* gap між рядками і колонками */
             flex: 1;
             padding: 5px 0;
-            gap: 0;
         }
 
         .captured-group.top {
