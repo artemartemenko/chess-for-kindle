@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Chess for Kindle</title>
     
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-QWVNRDSRLJ');
     </script>
     
@@ -140,7 +138,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Width determined by board-container */
             width: min-content; 
         }
 
@@ -152,16 +149,15 @@
             min-width: 35px;
             margin-right: 4px;
             flex-shrink: 0;
-            /* Match height of board + controls roughly, or just stretch */
             align-self: stretch;
         }
 
         .captured-group {
             display: grid;
-            grid-template-columns: auto auto;  /* Замість max-content */
+            grid-template-columns: auto auto; 
             align-items: center;
             justify-content: center;
-            gap: 4px 2px;  /* gap між рядками і колонками */
+            gap: 4px 2px; 
             flex: 1;
             padding: 5px 0;
         }
