@@ -200,15 +200,18 @@
         }
 
         .board-container {
-            /* Make board responsive to both width and height */
-            /* Reserve ~120px for UI (top + bottom bars) */
-            --board-size: min(550px, min(calc(100vw - 60px), calc(100vh - 140px)));
+            width: 95vw;
+            height: 95vw;
+            max-width: 550px;
+            max-height: 550px;
+            /* Ensure it fits vertically too */
+            max-width: min(550px, calc(100vh - 140px));
+            max-height: min(550px, calc(100vh - 140px));
             
-            width: var(--board-size);
-            height: var(--board-size);
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0 auto;
         }
 
         .board {
@@ -279,10 +282,14 @@
             position: absolute;
             width: 12.5%;
             height: 12.5%;
-            font-size: 4em;
-            line-height: 0.95;
+            /* Font size will be set via JS for perfect scaling */
+            font-size: 40px; 
+            line-height: 1; 
             text-align: center;
             pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .piece.white {
@@ -421,6 +428,31 @@
             
             saveState();
             renderBoard();
+            adjustPieceSize(); // Initial adjustment
+            window.addEventListener('resize', adjustPieceSize);
+        }
+
+        function adjustPieceSize() {
+            // Calculate square size based on actual board width
+            if (boardElement) {
+                var squareSize = boardElement.offsetWidth / 8;
+                // Set font size to ~80% of square size
+                var fontSize = Math.floor(squareSize * 0.8);
+                
+                var pieces = document.querySelectorAll('.piece');
+                for (var i = 0; i < pieces.length; i++) {
+                    pieces[i].style.fontSize = fontSize + 'px';
+                }
+                
+                // Store style for future pieces
+                var style = document.getElementById('dynamic-piece-style');
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = 'dynamic-piece-style';
+                    document.head.appendChild(style);
+                }
+                style.innerHTML = '.piece { font-size: ' + fontSize + 'px !important; }';
+            }
         }
 
         function renderBoard() {
