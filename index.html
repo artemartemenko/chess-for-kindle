@@ -167,10 +167,10 @@
         }
 
         .captured-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: 30px 40px;
             align-items: center;
-            gap: 4px;
-            justify-content: center;
+            gap: 2px;
         }
 
         .captured-count {
@@ -178,12 +178,14 @@
             font-weight: bold;
             color: #333;
             line-height: 1;
+            text-align: center;
         }
 
         .captured-symbol {
             font-size: 30px;
             line-height: 30px;
             opacity: 1;
+            text-align: center;
         }
 
         .captured-symbol.white {
@@ -203,10 +205,6 @@
             text-align: center;
             margin-top: 5px;
             width: 100%;
-        }
-        
-        .captured-group.top .score {
-            
         }
 
         .board-container {
