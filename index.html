@@ -1069,12 +1069,11 @@
                 if (statusElements[i]) {
                     statusElements[i].textContent = status;
                     
-                    // Show status only for active player (unless game over)
                     if (isGameOver) {
                         statusElements[i].style.visibility = 'visible';
                     } else {
-                        var isTop = statusElements[i].id === 'status'; // Top is Black
-                        var isBottom = statusElements[i].id === 'statusBottom'; // Bottom is White
+                        var isTop = statusElements[i].id === 'status';
+                        var isBottom = statusElements[i].id === 'statusBottom';
                         
                         if (currentTurn === 'w') {
                             statusElements[i].style.visibility = isBottom ? 'visible' : 'hidden';
