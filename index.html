@@ -32,7 +32,6 @@
         .container {
             width: 100%;
             max-width: 600px;
-            /* margin: 0 auto; Removed auto margin as flex handles centering */
         }
 
         .info {
@@ -172,7 +171,7 @@
         .captured-symbol {
             font-size: 30px;
             line-height: 30px;
-            opacity: 1; /* Remove opacity to keep colors vivid */
+            opacity: 1; 
             justify-self: start;
         }
         
@@ -194,9 +193,8 @@
             margin-top: 5px;
         }
         
-        /* Fix score rotation for top group if group is rotated */
         .captured-group.top .score {
-            /* Group is rotated 180. Text inside will be rotated 180. Correct for top player. */
+            
         }
 
         .board-container {
@@ -204,7 +202,7 @@
             height: 95vw;
             max-width: 550px;
             max-height: 550px;
-            /* Ensure it fits vertically too */
+            
             max-width: min(550px, calc(100vh - 140px));
             max-height: min(550px, calc(100vh - 140px));
             
@@ -282,9 +280,9 @@
             position: absolute;
             width: 12.5%;
             height: 12.5%;
-            /* Font size will be set via JS for perfect scaling */
+            
             font-size: 40px; 
-            line-height: 1; 
+            line-height: 0.8; 
             text-align: center;
             pointer-events: none;
             display: flex;
