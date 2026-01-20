@@ -153,47 +153,47 @@
         }
 
         .captured-group {
-            display: grid;
-            grid-template-columns: auto auto; 
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 4px 2px; 
+            justify-content: flex-start;  /* flex-start замість start для кращої сумісності */
             flex: 1;
             padding: 5px 0;
+            gap: 3px;
         }
 
         .captured-group.top {
-            align-content: start;
             transform: rotate(180deg);
         }
 
         .captured-group.bottom {
-            align-content: start;
+            /* Можна взагалі прибрати, якщо нічого специфічного немає */
         }
 
         .captured-row {
-            display: contents;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
         }
 
         .captured-count {
             font-size: 18px;
             font-weight: bold;
             color: #333;
-            justify-self: end;
-            padding-right: 2px;
             line-height: 1;
         }
 
         .captured-symbol {
             font-size: 30px;
             line-height: 30px;
-            opacity: 1; 
-            justify-self: start;
+            opacity: 1;
         }
-        
+
         .captured-symbol.white {
             color: #fff !important;
-            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 
+                        1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
         }
 
         .captured-symbol.black {
@@ -205,8 +205,8 @@
             font-weight: bold;
             color: #555;
             text-align: center;
-            grid-column: 1 / -1;
             margin-top: 5px;
+            width: 100%;
         }
         
         .captured-group.top .score {
