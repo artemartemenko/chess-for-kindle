@@ -166,11 +166,12 @@
             transform: rotate(180deg);
         }
 
+
         .captured-row {
-            display: grid;
-            grid-template-columns: 30px 40px;
+            display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
+            justify-content: center;
         }
 
         .captured-count {
@@ -178,14 +179,12 @@
             font-weight: bold;
             color: #333;
             line-height: 1;
-            text-align: center;
         }
 
         .captured-symbol {
             font-size: 30px;
             line-height: 30px;
             opacity: 1;
-            text-align: center;
         }
 
         .captured-symbol.white {
