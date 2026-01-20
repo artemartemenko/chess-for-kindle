@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Chess for Kindle</title>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QWVNRDSRLJ');
+    </script>
+    
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
@@ -292,13 +303,13 @@
             height: 12.5%;
             
             font-size: 40px; 
-            line-height: 1; 
+            line-height: 0.9; 
             text-align: center;
             pointer-events: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-bottom: 0.5%; /* Subtle lift for Kindle without breaking mobile */
+            padding-bottom: 1%; /* Nudge pieces up slightly */
         }
 
         .piece.white {
