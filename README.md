@@ -32,7 +32,7 @@ Tested on:
 - **Kindle Paperwhite 4 (10th Gen)**
 - **Kindle Paperwhite 5 (11th Gen)**
 
-Should work on most Kindles and other devices with a browser.
+Should work on most Kindles and other devices with a browser and a touchscreen.
 
 ## How to Play
 
