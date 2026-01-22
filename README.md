@@ -39,13 +39,16 @@ Should work on most Kindles and other devices with a browser.
 2. Sit opposite each other.
 3. Make the first move.
 
-## License
 
-MIT — free to use, modify, and share.
 
 <p align="center">
-  You can support the development and maintenance of this project via Ko-fi:<br>
+  You can support the development and maintenance of this project via Ko-fi:<br><br>
   <a href="https://ko-fi.com/artemartemenko">
     <img src="assets/support_me_on_kofi_blue.png" alt="Support me on Ko-fi" width="200">
   </a>
 </p>
+
+
+## License
+
+MIT — free to use, modify, and share.
