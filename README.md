@@ -43,4 +43,9 @@ Should work on most Kindles and other devices with a browser.
 
 MIT — free to use, modify, and share.
 
-[![Support me on Ko-fi](assets/support_me_on_kofi_blue.png)](https://ko-fi.com/artemartemenko)
+<p align="center">
+  You can support the development and maintenance of this project via Ko-fi:<br>
+  <a href="https://ko-fi.com/artemartemenko">
+    <img src="assets/support_me_on_kofi_blue.png" alt="Support me on Ko-fi" width="200">
+  </a>
+</p>
