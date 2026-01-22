@@ -42,3 +42,5 @@ Should work on most Kindles and other devices with a browser.
 ## License
 
 MIT — free to use, modify, and share.
+
+[![Support me on Ko-fi](assets/support_me_on_kofi_blue.png)](https://ko-fi.com/artemartemenko)
