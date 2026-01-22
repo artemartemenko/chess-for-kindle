@@ -189,6 +189,9 @@
             line-height: 30px;
             opacity: 1; 
             justify-self: start;
+            /* Prevent iOS from converting to emoji */
+            font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
+            font-variant-emoji: text;
         }
         
         .captured-symbol.white {
@@ -303,6 +306,10 @@
             justify-content: center;
             align-items: center;
             padding-bottom: 1%; /* Nudge pieces up slightly */
+            
+            /* Prevent iOS from converting to emoji */
+            font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
+            font-variant-emoji: text;
         }
 
         .piece.white {
