@@ -42,7 +42,7 @@ Should work on most Kindles and other devices with a browser.
 
 
 <p align="center">
-  You can support the development and maintenance of this project via Ko-fi:<br><br>
+  You can support the development and maintenance of this project:<br><br>
   <a href="https://ko-fi.com/artemartemenko">
     <img src="assets/support_me_on_kofi_blue.png" alt="Support me on Ko-fi" width="200">
   </a>
