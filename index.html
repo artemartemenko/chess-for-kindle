@@ -480,7 +480,7 @@
         var castlingRights = { w: {k: true, q: true}, b: {k: true, q: true} };
         var halfMoveClock = 0; 
         var isGameOver = false;
-        var pendingPromotion = null; // Store move details waiting for promotion choice
+        var pendingPromotion = null;
 
         var boardElement = document.getElementById('board');
         var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
@@ -607,7 +607,6 @@
                 
                 if (moveExists) {
                     var piece = board[selectedSquare.row][selectedSquare.col];
-                    // Check for promotion
                     if (piece.charAt(1) === 'P' && (row === 0 || row === 7)) {
                         pendingPromotion = { from: selectedSquare, to: { row: row, col: col } };
                         showPromotionModal();
@@ -1220,10 +1219,9 @@
         function hidePromotionModal() {
             if (promotionModal) promotionModal.style.display = 'none';
             pendingPromotion = null;
-            clearSelection(); // Clear selection if cancelled or done
+            clearSelection();
         }
 
-        // Promotion event listeners
         for (var i = 0; i < promoOptions.length; i++) {
             (function(opt) {
                 opt.addEventListener('click', function() {
@@ -1236,7 +1234,6 @@
             })(promoOptions[i]);
         }
         
-        // Close modal on outside click (cancel move)
         if (promotionModal) {
             promotionModal.addEventListener('click', function(e) {
                 if (e.target === promotionModal) {
