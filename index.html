@@ -216,11 +216,16 @@
         }
 
         .board-container {
-            width: calc(100vw - 70px);
-            height: calc(100vw - 70px);
+            /* Width calculation: 100vw - (Side Panel ~50px) - (Body Padding 16px) - (Safety Margin) */
+            /* Increased safety margin to 100px to prevent overflow on older devices */
+            width: calc(100vw - 100px);
+            height: calc(100vw - 100px);
             
-            max-width: calc(100vh - 140px);
-            max-height: calc(100vh - 140px);
+            max-width: 550px;
+            max-height: 550px;
+            
+            max-width: min(550px, calc(100vh - 140px));
+            max-height: min(550px, calc(100vh - 140px));
             
             display: flex;
             justify-content: center;
