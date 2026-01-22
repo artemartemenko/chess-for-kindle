@@ -23,7 +23,7 @@ Just sit opposite each other and play.
 
 - **Made for E-Ink:** High contrast, no animations, no flicker.
 - **Two humans, one device:** The board rotates automatically for face-to-face play.
-- **Lightweight & offline-friendly:** Loads fast, drains almost no battery.
+- **Lightweight:** Loads fast, drains almost no battery.
 
 ## Compatibility
 
