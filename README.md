@@ -23,7 +23,8 @@ Just sit opposite each other and play.
 ## Compatibility
 
 Tested on:
-- **Kindle Paperwhite 11 (11th Gen)**
+- **Kindle 10 (10th Gen)**
+- **Kindle Paperwhite 5 (11th Gen)**
 
 Should work on most Kindles and other devices with a browser.
 
