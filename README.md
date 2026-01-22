@@ -29,7 +29,7 @@ Should work on most Kindles and other devices with a browser.
 
 ## How to Play
 
-1. Open https://artemartemenko.github.io/chess-for-kindle/ in the Kindle Web Browser.
+1. Open https://artemartemenko.github.io/chess-for-kindle/ or https://is.gd/chesskindle in the Kindle Web Browser.
 2. Sit opposite each other.
 3. Make the first move.
 
