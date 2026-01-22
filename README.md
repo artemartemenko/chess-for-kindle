@@ -6,6 +6,11 @@ For quiet evenings at home, slow mornings in a cafe, park, or long trips where y
 No accounts. No AI. No distractions.  
 Just chess.
 
+<p align="center">
+  <img src="assets/preview.jpg" width="600">
+</p>
+
+
 ## Why this exists
 
 eReader screens feel close to paper.  
