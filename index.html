@@ -1213,7 +1213,17 @@
         }
 
         function showPromotionModal() {
-            if (promotionModal) promotionModal.style.display = 'flex';
+            if (promotionModal) {
+                promotionModal.style.display = 'flex';
+                var content = promotionModal.querySelector('.promotion-content');
+                if (content) {
+                    if (currentTurn === 'b') {
+                        content.style.transform = 'rotate(180deg)';
+                    } else {
+                        content.style.transform = 'none';
+                    }
+                }
+            }
         }
 
         function hidePromotionModal() {
