@@ -189,7 +189,6 @@
             line-height: 30px;
             opacity: 1; 
             justify-self: start;
-            /* Prevent iOS from converting to emoji */
             font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
             font-variant-emoji: text;
         }
@@ -305,9 +304,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-bottom: 1%; /* Nudge pieces up slightly */
+            padding-bottom: 1%;
             
-            /* Prevent iOS from converting to emoji */
             font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
             font-variant-emoji: text;
         }
@@ -384,8 +382,8 @@
 
     <script>
         var pieceSymbols = {
-            'wK': '♚', 'wQ': '♛', 'wR': '♜', 'wB': '♝', 'wN': '♞', 'wP': '♟',
-            'bK': '♚', 'bQ': '♛', 'bR': '♜', 'bB': '♝', 'bN': '♞', 'bP': '♟'
+            'wK': '♚\uFE0E', 'wQ': '♛\uFE0E', 'wR': '♜\uFE0E', 'wB': '♝\uFE0E', 'wN': '♞\uFE0E', 'wP': '♟\uFE0E',
+            'bK': '♚\uFE0E', 'bQ': '♛\uFE0E', 'bR': '♜\uFE0E', 'bB': '♝\uFE0E', 'bN': '♞\uFE0E', 'bP': '♟\uFE0E'
         };
 
         var pieceValues = {
