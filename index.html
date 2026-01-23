@@ -296,28 +296,71 @@
             line-height: 0.9; 
             text-align: center;
             pointer-events: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 1%;
             
             font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
             font-variant-emoji: text;
         }
 
-        .piece.white {
+        .piece-layer {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 0;
+        }
+
+        .piece-upper {
+            top: 0;
+        }
+
+        .piece-lower {
+            bottom: 0;
+            transform: rotate(180deg);
+            display: none;
+        }
+
+        .board.card-mode .piece-layer {
+            height: 52%;
+            font-size: 57%;
+        }
+
+        .board.card-mode .piece.black .piece-layer {
+            padding-top: 4%; 
+            padding-bottom: 0;
+        }
+
+        .board.card-mode .piece-lower {
+            display: flex;
+        }
+
+        .board.standard-mode .piece-layer {
+            padding-bottom: 15%;
+        }
+
+        .board.standard-mode.black-turn .piece {
+            transform: rotate(180deg);
+        }
+
+        .piece.white .piece-layer {
             color: #fff !important;
             text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
         }
 
-        .piece.black {
+        .settings-bar {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 5px;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+
+        .piece.black .piece-layer {
             color: #000 !important;
         }
 
-        .board.black-turn .piece {
-            transform: rotate(180deg);
-            -webkit-transform: rotate(180deg);
-        }
 
         .rank1 { top: 87.5%; }
         .rank2 { top: 75%; }
@@ -418,9 +461,9 @@
                 <div class="captured-group top" id="capturedTop"></div>
                 <div class="captured-group bottom" id="capturedBottom"></div>
             </div>
-            <div class="main-column">
-                <div class="info">
-                    <button id="backBtn" class="btn">&lt;</button>
+          <div class="main-column">
+                  <div class="info">
+                      <button id="backBtn" class="btn">&lt;</button>
                     <div class="status" id="status">White to move</div>
                     <button id="forwardBtn" class="btn">&gt;</button>
                 </div>
@@ -474,20 +517,22 @@
         var enPassantTarget = null;
         var castlingRights = { w: {k: true, q: true}, b: {k: true, q: true} };
         var halfMoveClock = 0; 
-        var isGameOver = false;
-        var pendingPromotion = null;
-
-        var boardElement = document.getElementById('board');
-        var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
-        var backButtons = [document.getElementById('backBtn'), document.getElementById('backBtnBottom')];
-        var forwardButtons = [document.getElementById('forwardBtn'), document.getElementById('forwardBtnBottom')];
-        var promotionModal = document.getElementById('promotionModal');
-        var promoOptions = document.querySelectorAll('.promo-option');
-        
-        function initBoard() {
-            boardElement.innerHTML = '';
-            
-            for (var row = 0; row < 8; row++) {
+          var isGameOver = false;
+          var pendingPromotion = null;
+          var savedMode = localStorage.getItem('chess_card_mode');
+          var isCardMode = savedMode !== null ? (savedMode === 'true') : true;
+  
+          var boardElement = document.getElementById('board');
+          var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
+          var backButtons = [document.getElementById('backBtn'), document.getElementById('backBtnBottom')];
+          var forwardButtons = [document.getElementById('forwardBtn'), document.getElementById('forwardBtnBottom')];
+          var promotionModal = document.getElementById('promotionModal');
+          var promoOptions = document.querySelectorAll('.promo-option');
+          
+          function initBoard() {
+              boardElement.innerHTML = '';
+              
+              for (var row = 0; row < 8; row++) {
                 for (var col = 0; col < 8; col++) {
                     var square = document.createElement('div');
                     square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
@@ -527,12 +572,21 @@
         }
 
         function renderBoard() {
-            if (currentTurn === 'b') {
-                boardElement.classList.add('black-turn');
-            } else {
+            if (isCardMode) {
+                boardElement.classList.add('card-mode');
+                boardElement.classList.remove('standard-mode');
                 boardElement.classList.remove('black-turn');
+            } else {
+                boardElement.classList.remove('card-mode');
+                boardElement.classList.add('standard-mode');
+                
+                if (currentTurn === 'b') {
+                    boardElement.classList.add('black-turn');
+                } else {
+                    boardElement.classList.remove('black-turn');
+                }
             }
-
+            
             var existingPieces = boardElement.querySelectorAll('.piece');
             for (var i = 0; i < existingPieces.length; i++) {
                 existingPieces[i].parentNode.removeChild(existingPieces[i]);
@@ -566,7 +620,12 @@
                         pieceElement.classList.add(piece.charAt(0) === 'w' ? 'white' : 'black');
                         pieceElement.classList.add('rank' + (8 - row));
                         pieceElement.classList.add('file' + (col + 1));
-                        pieceElement.textContent = pieceSymbols[piece];
+                        
+                        var symbol = pieceSymbols[piece];
+                        pieceElement.innerHTML = 
+                            '<div class="piece-layer piece-upper">' + symbol + '</div>' +
+                            '<div class="piece-layer piece-lower">' + symbol + '</div>';
+                            
                         boardElement.appendChild(pieceElement);
                     }
                 }
@@ -1175,11 +1234,44 @@
         }
 
         function updateButtons() {
+            if (gameHistory.length <= 1) {
+                 var backText = "Rotate";
+                 var fwdText = "Card";
+                 
+                 for (var i = 0; i < backButtons.length; i++) {
+                     if (backButtons[i]) {
+                         backButtons[i].disabled = false;
+                         backButtons[i].innerHTML = backText;
+                         backButtons[i].style.backgroundColor = !isCardMode ? '#bac84a' : '';
+                         backButtons[i].style.fontSize = '18px';
+                     }
+                 }
+                 for (var i = 0; i < forwardButtons.length; i++) {
+                     if (forwardButtons[i]) {
+                         forwardButtons[i].disabled = false;
+                         forwardButtons[i].innerHTML = fwdText;
+                         forwardButtons[i].style.backgroundColor = isCardMode ? '#bac84a' : '';
+                         forwardButtons[i].style.fontSize = '18px';
+                     }
+                 }
+                 return;
+            }
+
             for (var i = 0; i < backButtons.length; i++) {
-                if (backButtons[i]) backButtons[i].disabled = historyIndex <= 0;
+                if (backButtons[i]) {
+                    backButtons[i].innerHTML = '&lt;';
+                    backButtons[i].style.backgroundColor = '';
+                    backButtons[i].style.fontSize = '';
+                    backButtons[i].disabled = historyIndex <= 0;
+                }
             }
             for (var i = 0; i < forwardButtons.length; i++) {
-                if (forwardButtons[i]) forwardButtons[i].disabled = historyIndex >= gameHistory.length - 1;
+                if (forwardButtons[i]) {
+                    forwardButtons[i].innerHTML = '&gt;';
+                    forwardButtons[i].style.backgroundColor = '';
+                    forwardButtons[i].style.fontSize = '';
+                    forwardButtons[i].disabled = historyIndex >= gameHistory.length - 1;
+                }
             }
         }
 
@@ -1187,6 +1279,13 @@
             (function(btn) {
                 if (btn) {
                     btn.addEventListener('click', function() {
+                        if (gameHistory.length <= 1) {
+                            isCardMode = false;
+                            localStorage.setItem('chess_card_mode', isCardMode);
+                            updateButtons();
+                            renderBoard();
+                            return;
+                        }
                         if (historyIndex > 0) {
                             restoreState(historyIndex - 1);
                         }
@@ -1199,6 +1298,13 @@
             (function(btn) {
                 if (btn) {
                     btn.addEventListener('click', function() {
+                        if (gameHistory.length <= 1) {
+                            isCardMode = true;
+                            localStorage.setItem('chess_card_mode', isCardMode);
+                            updateButtons();
+                            renderBoard();
+                            return;
+                        }
                         if (historyIndex < gameHistory.length - 1) {
                             restoreState(historyIndex + 1);
                         }
