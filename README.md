@@ -26,7 +26,7 @@ Just sit opposite each other and play.
 2. Sit opposite each other.
 3. Make the first move.
 
-PS. You can support the development and maintenance of this project:
+You can support ongoing development of this project:
 
 <p align="center">
   <a href="https://ko-fi.com/artemartemenko">
