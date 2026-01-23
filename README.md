@@ -19,20 +19,6 @@ This project turns your Kindle into a minimal, paper-like chessboard you can sha
 No menus to learn. No settings to tweak.  
 Just sit opposite each other and play.
 
-## Features
-
-- **Made for E-Ink:** High contrast, no animations, no flicker.
-- **Two humans, one device:** The board rotates automatically for face-to-face play.
-- **Lightweight:** Loads fast, drains almost no battery.
-
-## Compatibility
-
-Tested on:
-- **Kindle 10 (10th Gen)**
-- **Kindle Paperwhite 4 (10th Gen)**
-- **Kindle Paperwhite 5 (11th Gen)**
-
-Should work on most Kindles and other devices with a browser and a touchscreen.
 
 ## How to Play
 
@@ -47,6 +33,23 @@ PS. You can support the development and maintenance of this project:
     <img src="assets/support_me_on_kofi_blue.png" alt="Support me on Ko-fi" width="200">
   </a>
 </p>
+
+
+## Features
+
+- **Made for E-Ink:** High contrast, no animations, no flicker.
+- **Two humans, one device:** The board rotates automatically for face-to-face play.
+- **Lightweight:** Loads fast, drains almost no battery.
+
+
+## Compatibility
+
+Tested on:
+- **Kindle 10 (10th Gen)**
+- **Kindle Paperwhite 4 (10th Gen)**
+- **Kindle Paperwhite 5 (11th Gen)**
+
+Should work on most Kindles and other devices with a browser and a touchscreen.
 
 
 ## License
