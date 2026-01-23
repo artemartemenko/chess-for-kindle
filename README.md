@@ -44,13 +44,13 @@ You can support ongoing development of this project:
 
 ## Compatibility
 
+Should work on most Kindles and other devices with a browser and a touchscreen.
+
 Tested on:
 - **Kindle 10 (10th Gen)**
 - **Kindle Paperwhite 4 (10th Gen)**
 - **Kindle Paperwhite 5 (11th Gen)**
 - **iPad Pro 13-inch (M4)**
-
-Should work on most Kindles and other devices with a browser and a touchscreen.
 
 
 ## License
