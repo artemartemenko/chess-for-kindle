@@ -20,6 +20,13 @@ No menus to learn. No settings to tweak.
 Just sit opposite each other and play.
 
 
+## Features
+
+- **Made for E-Ink:** High contrast, no animations, no flicker.
+- **Two humans, one device:** The board rotates automatically for face-to-face play.
+- **Lightweight:** Loads fast, drains almost no battery.
+
+
 ## How to Play
 
 1. Open https://artemartemenko.github.io/chess-for-kindle/ or https://is.gd/chesskindle in the Kindle Web Browser.
@@ -33,13 +40,6 @@ You can support ongoing development of this project:
     <img src="assets/support_me_on_kofi_blue.png" alt="Support me on Ko-fi" width="200">
   </a>
 </p>
-
-
-## Features
-
-- **Made for E-Ink:** High contrast, no animations, no flicker.
-- **Two humans, one device:** The board rotates automatically for face-to-face play.
-- **Lightweight:** Loads fast, drains almost no battery.
 
 
 ## Compatibility
