@@ -16,7 +16,6 @@ Just chess.
 eReader screens feel close to paper.  
 This project turns your Kindle into a minimal, paper-like chessboard you can share with another person.
 
-No menus to learn. No settings to tweak.  
 Just sit opposite each other and play.
 
 
