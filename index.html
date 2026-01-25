@@ -4,6 +4,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
         <title>Chess for Kindle</title>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QWVNRDSRLJ');
+        </script>
         
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -54,10 +62,10 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
-                margin: 6px 0;
+                margin: 5px 0;
                 height: 44px;
                 width: calc(100vw - 10px);
-                max-width: calc(100vh - 115px);
+                max-width: calc(100vh - 120px);
             }
 
             .info {
@@ -72,15 +80,22 @@
                 flex: 1;
                 min-width: 0;
                 padding-top: 2px;
+                text-align: center;
             }
     
             .captured-inline {
                 display: flex;
                 align-items: center;
                 gap: 2px;
-                padding: 0 4px 2px 4px;
+                padding: 0;
+                height: 100%;
                 align-self: flex-end;
+                width: 70px; 
+                flex: 0 0 70px; 
             }
+
+            #capturedTopB, #capturedBottomW { justify-content: flex-start; }
+            #capturedTopW, #capturedBottomB { justify-content: flex-end; }
 
             .btn {
                 height: 44px;
