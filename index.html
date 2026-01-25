@@ -65,7 +65,7 @@
                 margin: 5px 0;
                 height: 44px;
                 width: calc(100vw - 10px);
-                max-width: calc(100vh - 120px);
+                max-width: calc(100vh - 115px);
             }
 
             .info {
@@ -88,10 +88,25 @@
                 align-items: center;
                 gap: 2px;
                 padding: 0;
-                height: 100%;
+                width: 70px;
+                flex: 0 0 70px;
+            }
+
+            .info-bottom .captured-inline {
                 align-self: flex-end;
-                width: 70px; 
-                flex: 0 0 70px; 
+                margin-bottom: 2px;
+            }
+
+            .info .captured-inline {
+                align-self: flex-start;
+                margin-top: 2px; 
+            }
+
+            .info-bottom .info-center {
+                align-self: flex-start;
+            }
+            .info .info-center {
+                align-self: flex-end;
             }
 
             #capturedTopB, #capturedBottomW { justify-content: flex-start; }
