@@ -234,6 +234,10 @@
             }
             .piece svg { width: 70%; height: 70%; }
             .board.black-turn .piece { transform: rotate(180deg); }
+
+            .board.rotation-locked { transform: rotate(0deg) !important; }
+            .board.rotation-locked .piece[data-piece^="b"] { transform: rotate(180deg) !important; }
+            .board.rotation-locked .piece[data-piece^="w"] { transform: rotate(0deg) !important; }
     
             .rank1 { top: 87.5%; } .rank2 { top: 75%; } .rank3 { top: 62.5%; } .rank4 { top: 50%; }
             .rank5 { top: 37.5%; } .rank6 { top: 25%; } .rank7 { top: 12.5%; } .rank8 { top: 0%; }
@@ -409,6 +413,10 @@
         var gameStartTime = null;
         var statsSent = false;
 
+        var isRotationLocked = localStorage.getItem('chessRotationLocked') === 'true';
+        var lastClickTime = 0;
+        var lastClickSquare = null;
+
         function saveGame() {
             var gameData = {
                 board: board,
@@ -511,7 +519,11 @@
         }
 
         function renderBoard() {
-            boardElement.className = currentTurn === 'b' ? 'board black-turn' : 'board';
+            if (isRotationLocked) {
+                boardElement.className = 'board rotation-locked';
+            } else {
+                boardElement.className = currentTurn === 'b' ? 'board black-turn' : 'board';
+            }
 
             var kingPos = findKing(board, currentTurn);
             var checkPos = null;
@@ -557,7 +569,30 @@
 
             var row = +e.currentTarget.dataset.row;
             var col = +e.currentTarget.dataset.col;
+            var now = Date.now();
 
+            // ПРОВЕРКА НА ДВОЙНОЙ КЛИК ПО ПУСТОЙ КЛЕТКЕ
+            if (board[row][col] === '') {
+                if (lastClickSquare && lastClickSquare.row === row && lastClickSquare.col === col) {
+                    if (now - lastClickTime < 500) {
+                        isRotationLocked = !isRotationLocked;
+                        
+                        // СОХРАНЯЕМ В ПАМЯТЬ КИНДЛА
+                        localStorage.setItem('chessRotationLocked', isRotationLocked);
+                        
+                        renderBoard();
+                        lastClickTime = 0;
+                        lastClickSquare = null;
+                        return;
+                    }
+                }
+            }
+            
+            // Запоминаем текущий клик для следующей проверки
+            lastClickTime = now;
+            lastClickSquare = {row: row, col: col};
+
+            // --- ДАЛЕЕ СТАНДАРТНАЯ ЛОГИКА ХОДА (без изменений) ---
             if (selectedSquare) {
                 var moves = getPossibleMoves(selectedSquare.row, selectedSquare.col);
                 var valid = false;
@@ -1198,6 +1233,22 @@
         } else {
             startGame();
         }
+
+
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                isRotationLocked = !isRotationLocked;
+                
+                var statusMsg = isRotationLocked ? "Rotation: Fixed" : "Rotation: Auto";
+                document.getElementById('status').textContent = statusMsg;
+                document.getElementById('statusBottom').textContent = statusMsg;
+                
+                setTimeout(function() {
+                    renderBoard();
+                }, 500);
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
