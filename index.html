@@ -306,6 +306,11 @@
             <div id="welcomeModal" class="promotion-modal" style="display: none;">
                 <div class="promotion-content" style="min-width: 250px;">
                     <div class="promotion-title">Chess for Kindle</div>
+
+                    <div id="updateNote" style="font-size: 14px; text-align: left; background: #eee; padding: 10px; border: 1px solid #000; margin: 15px 0; line-height: 1.4;">
+                        <strong>New:</strong> Double-tap empty square to <strong>lock</strong> piece rotation.
+                    </div>
+
                     <div style="margin: 20px 0;">
                         <button id="newGameBtn" class="btn" style="width: 100%; margin-bottom: 10px;">
                             New game
@@ -571,13 +576,11 @@
             var col = +e.currentTarget.dataset.col;
             var now = Date.now();
 
-            // ПРОВЕРКА НА ДВОЙНОЙ КЛИК ПО ПУСТОЙ КЛЕТКЕ
             if (board[row][col] === '') {
                 if (lastClickSquare && lastClickSquare.row === row && lastClickSquare.col === col) {
                     if (now - lastClickTime < 500) {
                         isRotationLocked = !isRotationLocked;
                         
-                        // СОХРАНЯЕМ В ПАМЯТЬ КИНДЛА
                         localStorage.setItem('chessRotationLocked', isRotationLocked);
                         
                         renderBoard();
@@ -588,11 +591,9 @@
                 }
             }
             
-            // Запоминаем текущий клик для следующей проверки
             lastClickTime = now;
             lastClickSquare = {row: row, col: col};
 
-            // --- ДАЛЕЕ СТАНДАРТНАЯ ЛОГИКА ХОДА (без изменений) ---
             if (selectedSquare) {
                 var moves = getPossibleMoves(selectedSquare.row, selectedSquare.col);
                 var valid = false;
