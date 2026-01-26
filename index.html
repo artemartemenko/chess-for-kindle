@@ -152,12 +152,20 @@
             .captured-count, .score {
                 font-size: 13px;
                 font-weight: bold;
-                line-height: 1;
+                line-height: 16px;
                 margin: 0;
+                display: inline-block;
+                vertical-align: bottom;
             }
         
-            .captured-count { color: #333; }
-            .score { color: #005500; }
+            .captured-count {
+                color: #333;
+                padding-bottom: 2px;
+            }
+            .score {
+                color: #005500;
+                padding-bottom: 2px;
+            }
         
             .captured-symbol {
                 width: 16px;
@@ -269,6 +277,13 @@
                 text-align: center;
             }
 
+            .promotion-content .btn {
+                width: 100%;
+                flex: none;
+                margin-bottom: 10px;
+                display: block;
+            }
+
             .promotion-title {
                 font-size: 20px;
                 font-weight: bold;
@@ -307,6 +322,20 @@
                         <div class="promo-option" data-type="R"></div>
                         <div class="promo-option" data-type="B"></div>
                         <div class="promo-option" data-type="N"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="welcomeModal" class="promotion-modal" style="display: none;">
+                <div class="promotion-content" style="min-width: 250px;">
+                    <div class="promotion-title">Chess for Kindle</div>
+                    <div style="margin: 20px 0;">
+                        <button id="newGameBtn" class="btn" style="width: 100%; margin-bottom: 10px;">
+                            New game
+                        </button>
+                        <button id="continueGameBtn" class="btn" style="width: 100%;">
+                            Continue
+                        </button>
                     </div>
                 </div>
             </div>
@@ -373,6 +402,7 @@
         var halfMoveClock = 0;
         var isGameOver = false;
         var pendingPromotion = null;
+        var hasAutoSaved = false;
 
         var boardElement = document.getElementById('board');
         var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
@@ -380,6 +410,53 @@
         var forwardButtons = [document.getElementById('forwardBtn'), document.getElementById('forwardBtnBottom')];
         var promotionModal = document.getElementById('promotionModal');
         var squareElements = [];
+
+        function saveGame() {
+            var gameData = {
+                board: board,
+                currentTurn: currentTurn,
+                capturedPieces: capturedPieces,
+                lastMove: lastMove,
+                enPassantTarget: enPassantTarget,
+                castlingRights: castlingRights,
+                halfMoveClock: halfMoveClock,
+                gameHistory: gameHistory,
+                historyIndex: historyIndex,
+                isGameOver: isGameOver,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('chessGameSave', JSON.stringify(gameData));
+        }
+
+        function loadGame() {
+            var saved = localStorage.getItem('chessGameSave');
+            if (!saved) return false;
+            
+            try {
+                var data = JSON.parse(saved);
+                board = data.board;
+                currentTurn = data.currentTurn;
+                capturedPieces = data.capturedPieces;
+                lastMove = data.lastMove;
+                enPassantTarget = data.enPassantTarget;
+                castlingRights = data.castlingRights;
+                halfMoveClock = data.halfMoveClock;
+                gameHistory = data.gameHistory;
+                historyIndex = data.historyIndex;
+                isGameOver = data.isGameOver;
+                renderBoard();
+                return true;
+            } catch(e) {
+                console.error('Failed to load game:', e);
+                return false;
+            }
+        }
+
+        function clearSavedGame() {
+            localStorage.removeItem('chessGameSave');
+        }
+
+        var originalSaveState = saveState;
 
         (function initPieceSymbols() {
         var rawSvgs = {
@@ -799,6 +876,8 @@
                 halfMoveClock: halfMoveClock
             });
             historyIndex++;
+
+            if (hasAutoSaved) saveGame();
         }
 
         function restoreState(idx) {
@@ -862,13 +941,11 @@
                 cont.innerHTML = html;
             }
 
-            // Рендерим трофеи: Белым показываем съеденные черные фигуры, Черным — белые.
             render('capturedBottomW', capturedPieces.b, 'b');
             render('capturedBottomB', capturedPieces.w, 'w');
             render('capturedTopB', capturedPieces.w, 'w');
             render('capturedTopW', capturedPieces.b, 'b');
 
-            // Преимущество пишем тому, кто выигрывает
             if (wAdv > 0) {
                 scoreTop.textContent = '';
                 scoreBottom.textContent = '+' + wAdv;
@@ -1057,7 +1134,34 @@
             };
         }
 
-        initBoard();
+        window.onload = function() {
+            var welcomeModal = document.getElementById('welcomeModal');
+            var newGameBtn = document.getElementById('newGameBtn');
+            var continueGameBtn = document.getElementById('continueGameBtn');
+            
+            var hasSavedGame = localStorage.getItem('chessGameSave') !== null;
+            
+            if (hasSavedGame) {
+                welcomeModal.style.display = 'flex';
+                
+                newGameBtn.onclick = function() {
+                    clearSavedGame();
+                    initBoard();
+                    hasAutoSaved = true;
+                    welcomeModal.style.display = 'none';
+                };
+                
+                continueGameBtn.onclick = function() {
+                    initBoard();
+                    loadGame();
+                    hasAutoSaved = true;
+                    welcomeModal.style.display = 'none';
+                };
+            } else {
+                initBoard();
+                hasAutoSaved = true;
+            }
+        };
     </script>
 </body>
 </html>
