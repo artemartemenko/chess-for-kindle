@@ -32,7 +32,7 @@ Just sit opposite each other and play.
 2. Sit opposite each other.
 3. Make the first move.
 
-Settings: Double-tap empty square to **lock** piece rotation.
+Settings: Double-tap any empty square to **lock** piece rotation.
 
 Tip: Bookmark the game page so you don't lose it. If you don't open other websites, the game will even launch automatically when you open your browser.
 
