@@ -142,7 +142,7 @@
                 text-overflow: ellipsis;
                 min-width: 0;
             }
-        
+
             .captured-row {
                 display: flex;
                 align-items: flex-end;
@@ -156,13 +156,8 @@
                 margin: 0;
             }
         
-            .captured-count {
-                color: #333;
-            }
-        
-            .score {
-                color: #005500;
-            }
+            .captured-count { color: #333; }
+            .score { color: #005500; }
         
             .captured-symbol {
                 width: 16px;
@@ -175,21 +170,6 @@
             .captured-symbol svg {
                 width: 100%;
                 height: 100%;
-            }
-        
-            .game-area {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-            }
-        
-            .main-column {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
             }
         
             .board-container {
@@ -285,16 +265,29 @@
         
             .promotion-content {
                 background: white; padding: 20px;
-                border: 2px solid #1a1a1a; border-radius: 8px;
+                border: 2px solid #000; border-radius: 8px;
                 text-align: center;
             }
+
+            .promotion-title {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
         
-            .promotion-options { display: flex; gap: 15px; }
+            .promotion-options { 
+                display: flex; 
+                justify-content: center;
+            }
         
             .promo-option {
-                cursor: pointer; width: 50px; height: 50px;
-                border: 1px solid #ccc; display: flex;
-                justify-content: center; align-items: center;
+                cursor: pointer; 
+                width: 50px; height: 50px;
+                border: 1px solid #ccc; 
+                display: flex;
+                justify-content: center; 
+                align-items: center;
+                margin: 0 8px;
             }
         
             .promo-option svg { width: 70%; height: 70%; }
