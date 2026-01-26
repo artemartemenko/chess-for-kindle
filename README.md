@@ -64,7 +64,7 @@ Tested on:
 * Fixed draw detection logic for threefold repetition.
 
 ### Version 1.0
-* Initial release
+* Initial release.
 
 
 ## License
