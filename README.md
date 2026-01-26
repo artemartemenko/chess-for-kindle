@@ -63,6 +63,9 @@ Tested on:
 **Bug fixes**
 * Fixed draw detection logic for threefold repetition.
 
+### Version 1.0
+* Initial release
+
 
 ## License
 
