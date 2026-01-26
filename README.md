@@ -32,7 +32,7 @@ Just sit opposite each other and play.
 2. Sit opposite each other.
 3. Make the first move.
 
-Settings: Double-tap on an empty cell to disable automatic rotation of pieces.
+Settings: Double-tap on an empty cell to **disable automatic rotation** of pieces.
 
 Tip: Bookmark the game page so you don't lose it. If you don't open other websites, the game will even launch automatically when you open your browser.
 
