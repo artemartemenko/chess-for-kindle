@@ -26,39 +26,53 @@
                 outline: none !important;
             }
         
-            :focus {
-                outline: none !important;
-            }
+            :focus { outline: none !important; }
+            button:focus, div:focus, .square:focus { outline: none !important; }
         
-            button:focus, div:focus, .square:focus {
-                outline: none !important;
+            html, body {
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+                background-color: #fff;
             }
-        
+    
             body {
                 font-family: "Bookerly", "Caecilia", Georgia, serif;
-                margin: 0;
-                padding: 0;
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
                 user-select: none;
-                overflow: hidden;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                height: 100vh;
-                width: 100vw;
                 cursor: default;
-                background-color: #fff;
             }
-        
+    
             .container {
-                width: 100vw;
-                height: 100vh;
+                width: 100%;
+                height: 100%;
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
-        
+
+            .game-area {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+    
+            .main-column {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+    
             .info, .info-bottom {
                 display: flex;
                 justify-content: space-between;
@@ -69,10 +83,8 @@
                 max-width: calc(100vh - 115px);
             }
         
-            .info {
-                transform: rotate(180deg);
-            }
-        
+            .info { transform: rotate(180deg); }
+    
             .info-center {
                 display: flex;
                 flex-direction: column;
@@ -81,29 +93,29 @@
                 flex: 1;
                 min-width: 0;
                 height: 44px;
-                padding: 0 0 2px 0;
+                padding: 1px 0 2px 0;
                 text-align: center;
             }
-        
+    
             .captured-inline {
                 display: flex;
                 align-items: flex-end;
-                gap: 2px;
                 padding: 0 0 2px 0;
                 width: 70px;
                 flex: 0 0 70px;
                 height: 44px;
             }
-        
-            #capturedTopB, #capturedBottomW { 
-                justify-content: flex-start;
-                margin-left: 8px;
+
+            .captured-row {
+                display: flex;
+                align-items: flex-end;
+                margin-right: 3px;
+                height: 16px;
             }
-            #capturedTopW, #capturedBottomB { 
-                justify-content: flex-end;
-                margin-right: 8px;
-            }
-        
+    
+            #capturedTopB, #capturedBottomW { justify-content: flex-start; margin-left: 8px; }
+            #capturedTopW, #capturedBottomB { justify-content: flex-end; margin-right: 8px; }
+    
             .btn {
                 height: 44px;
                 padding: 0;
@@ -118,18 +130,18 @@
                 line-height: 40px;
                 cursor: pointer;
             }
-        
-            .btn:active {
-                background: #1a1a1a;
+    
+            .btn:active { background: #1a1a1a; }
+            .btn:disabled { background: #d0d0d0; border-color: #b0b0b0; color: #808080; }
+    
+            .promotion-content .btn {
+                width: 100%;
+                flex: none; 
+                margin-bottom: 12px;
+                display: block;
+                padding: 0 20px;
             }
-        
-            .btn:disabled {
-                background: #d0d0d0;
-                border-color: #b0b0b0;
-                color: #808080;
-                cursor: not-allowed;
-            }
-        
+
             .status, .status-bottom {
                 font-size: 14px;
                 font-weight: bold;
@@ -137,36 +149,24 @@
                 line-height: 1.2;
                 margin-top: 2px;
                 white-space: nowrap;
-                text-align: center;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                min-width: 0;
+            }
+    
+            .captured-count, .score { 
+                font-size: 13px; 
+                font-weight: bold; 
+                line-height: 13px;
+                height: 13px;      
+                margin: 0; 
+                display: block;
             }
 
-            .captured-row {
-                display: flex;
-                align-items: flex-end;
-                gap: 1px;
-            }
-        
-            .captured-count, .score {
-                font-size: 13px;
-                font-weight: bold;
-                line-height: 16px;
-                margin: 0;
-                display: inline-block;
-                vertical-align: bottom;
-            }
-        
-            .captured-count {
-                color: #333;
-                padding-bottom: 2px;
-            }
+            .captured-count { color: #333; }
+
             .score {
                 color: #005500;
-                padding-bottom: 2px;
+                transform: translateY(1px);
             }
-        
+    
             .captured-symbol {
                 width: 16px;
                 height: 16px;
@@ -174,12 +174,8 @@
                 justify-content: center;
                 align-items: center;
             }
-            
-            .captured-symbol svg {
-                width: 100%;
-                height: 100%;
-            }
-        
+            .captured-symbol svg { width: 100%; height: 100%; }
+    
             .board-container {
                 width: calc(100vw - 10px);
                 height: calc(100vw - 10px);
@@ -190,7 +186,7 @@
                 justify-content: center;
                 align-items: center;
             }
-        
+    
             .board {
                 position: relative;
                 width: 100%;
@@ -198,7 +194,7 @@
                 border: 2px solid #000;
                 background: #b58863;
             }
-        
+    
             .square {
                 position: absolute;
                 width: 12.5%;
@@ -207,62 +203,43 @@
                 justify-content: center;
                 align-items: center;
             }
-        
+    
             .square.light { background-color: #F0E0C7; }
             .square.dark { background-color: #b58863; }
-        
-            .square.selected {
-                background-color: #90a050 !important;
-                box-shadow: inset 0 0 0 3px #000 !important;
-            }
-        
+            .square.selected { background-color: #90a050 !important; box-shadow: inset 0 0 0 3px #000 !important; }
+            .square.check { background-color: #cc5555 !important; }
+            .square.last-move { background-color: #bac84a !important; box-shadow: inset 0 0 0 2px #000 !important; }
+            
             .square.possible-move::after {
                 content: '';
                 position: absolute;
-                width: 30%;
-                height: 30%;
+                width: 30%; height: 30%;
                 background-color: rgba(60, 60, 60, 0.7);
                 border-radius: 50%;
             }
-        
+    
             .square.possible-capture::after {
                 content: '';
                 position: absolute;
-                width: 90%;
-                height: 90%;
+                width: 90%; height: 90%;
                 border: 3px solid rgba(60, 60, 60, 0.7);
                 border-radius: 50%;
                 box-sizing: border-box;
             }
-        
-            .square.check { background-color: #cc5555 !important; }
-        
-            .square.last-move {
-                background-color: #bac84a !important;
-                box-shadow: inset 0 0 0 2px #000 !important;
-            }
-        
+    
             .piece {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                width: 100%; height: 100%;
+                display: flex; justify-content: center; align-items: center;
                 pointer-events: none;
             }
-        
-            .piece svg {
-                width: 75%;
-                height: 75%;
-            }
-        
+            .piece svg { width: 75%; height: 75%; }
             .board.black-turn .piece { transform: rotate(180deg); }
-        
+    
             .rank1 { top: 87.5%; } .rank2 { top: 75%; } .rank3 { top: 62.5%; } .rank4 { top: 50%; }
             .rank5 { top: 37.5%; } .rank6 { top: 25%; } .rank7 { top: 12.5%; } .rank8 { top: 0%; }
             .file1 { left: 0%; } .file2 { left: 12.5%; } .file3 { left: 25%; } .file4 { left: 37.5%; }
             .file5 { left: 50%; } .file6 { left: 62.5%; } .file7 { left: 75%; } .file8 { left: 87.5%; }
-        
+    
             .promotion-modal {
                 position: fixed;
                 top: 0; left: 0; width: 100%; height: 100%;
@@ -270,49 +247,45 @@
                 display: flex; justify-content: center; align-items: center;
                 z-index: 1000;
             }
-        
+    
             .promotion-content {
-                background: white; padding: 20px;
+                background: white; padding: 25px;
                 border: 2px solid #000; border-radius: 8px;
                 text-align: center;
             }
-
-            .promotion-content .btn {
-                width: 100%;
-                flex: none;
-                margin-bottom: 10px;
-                display: block;
-            }
-
+    
             .promotion-title {
                 font-size: 20px;
                 font-weight: bold;
-                margin-bottom: 15px;
+                margin-bottom: 20px;
             }
-        
-            .promotion-options { 
-                display: flex; 
-                justify-content: center;
-            }
-        
+    
+            .promotion-options { display: flex; justify-content: center; }
+    
             .promo-option {
-                cursor: pointer; 
-                width: 50px; height: 50px;
-                border: 1px solid #ccc; 
-                display: flex;
-                justify-content: center; 
-                align-items: center;
+                cursor: pointer; width: 55px; height: 55px;
+                border: 1px solid #ccc; display: flex;
+                justify-content: center; align-items: center;
                 margin: 0 8px;
             }
-        
+    
             .promo-option svg { width: 70%; height: 70%; }
         
             @media (max-width: 600px) {
                 .btn { font-size: 18px; line-height: 44px; }
             }
+
+            #eink-refresh-overlay {
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background-color: #000;
+                display: none;
+                z-index: 10001;
+            }
         </style>
     </head>
     <body>
+        <div id="eink-refresh-overlay"></div>
         <div class="container">
             <div id="promotionModal" class="promotion-modal" style="display: none;">
                 <div class="promotion-content">
@@ -370,6 +343,25 @@
         </div>
 
     <script>
+        function refreshEink() {
+            var overlay = document.getElementById('eink-refresh-overlay');
+            if (!overlay) return;
+            
+            setTimeout(function() {
+                overlay.style.display = 'block';
+                overlay.style.backgroundColor = '#000';
+                
+                setTimeout(function() {
+                    overlay.style.backgroundColor = '#fff';
+                    
+                    setTimeout(function() {
+                        overlay.style.display = 'none';
+                        overlay.style.backgroundColor = '#000';
+                    }, 100); 
+                }, 300); 
+            }, 100); 
+        }
+
         var pieceSymbols = {};
         var pieceValues = {'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 0};
         var KNIGHT_OFFSETS = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
@@ -455,8 +447,6 @@
         function clearSavedGame() {
             localStorage.removeItem('chessGameSave');
         }
-
-        var originalSaveState = saveState;
 
         (function initPieceSymbols() {
         var rawSvgs = {
@@ -1134,7 +1124,7 @@
             };
         }
 
-        window.onload = function() {
+        function startGame() {
             var welcomeModal = document.getElementById('welcomeModal');
             var newGameBtn = document.getElementById('newGameBtn');
             var continueGameBtn = document.getElementById('continueGameBtn');
@@ -1145,23 +1135,32 @@
                 welcomeModal.style.display = 'flex';
                 
                 newGameBtn.onclick = function() {
+                    welcomeModal.style.display = 'none';
                     clearSavedGame();
                     initBoard();
                     hasAutoSaved = true;
-                    welcomeModal.style.display = 'none';
+                    refreshEink();
                 };
                 
                 continueGameBtn.onclick = function() {
+                    welcomeModal.style.display = 'none';
                     initBoard();
                     loadGame();
                     hasAutoSaved = true;
-                    welcomeModal.style.display = 'none';
+                    refreshEink();
                 };
             } else {
                 initBoard();
                 hasAutoSaved = true;
+                setTimeout(refreshEink, 500);
             }
-        };
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startGame);
+        } else {
+            startGame();
+        }
     </script>
 </body>
 </html>
