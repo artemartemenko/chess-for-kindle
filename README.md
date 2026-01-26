@@ -54,6 +54,16 @@ Tested on:
 - **iPad Pro 13-inch (M4)**
 
 
+## Changelog
+
+### Version 1.1
+* Redesigned the interface: updated chess pieces, the board now occupies more screen space, plus various minor improvements.
+* Game state now persists after page reload.
+
+**Bug fixes**
+* Fixed draw detection logic for threefold repetition.
+
+
 ## License
 
 MIT — free to use, modify, and share.
