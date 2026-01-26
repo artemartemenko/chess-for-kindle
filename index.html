@@ -93,7 +93,7 @@
                 flex: 1;
                 min-width: 0;
                 height: 44px;
-                padding: 1px 0 2px 0;
+                padding: 0 0 2px 0;
                 text-align: center;
             }
     
@@ -402,6 +402,9 @@
         var forwardButtons = [document.getElementById('forwardBtn'), document.getElementById('forwardBtnBottom')];
         var promotionModal = document.getElementById('promotionModal');
         var squareElements = [];
+
+        var gameStartTime = null;
+        var statsSent = false;
 
         function saveGame() {
             var gameData = {
@@ -1047,6 +1050,18 @@
                     statusElements[i].style.visibility = (isGameOver || (currentTurn === 'w' ? !isTop : isTop)) ? 'visible' : 'hidden';
                 }
             }
+            if (isGameOver && !statsSent && gameStartTime) {
+                var gameEndTime = Date.now();
+                var durationSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
+                
+                gtag('event', 'game_finish', {
+                    'duration': durationSeconds,
+                    'result': status,
+                    'moves': gameHistory.length
+                });
+                
+                statsSent = true;
+            }
         }
 
         function hasLegalMoves(color) {
@@ -1140,6 +1155,9 @@
                     initBoard();
                     hasAutoSaved = true;
                     refreshEink();
+                    gameStartTime = Date.now(); 
+                    statsSent = false;
+                    gtag('event', 'game_start', { 'method': 'manual' });
                 };
                 
                 continueGameBtn.onclick = function() {
@@ -1148,6 +1166,8 @@
                     loadGame();
                     hasAutoSaved = true;
                     refreshEink();
+                    gameStartTime = Date.now();
+                    statsSent = false;
                 };
             } else {
                 initBoard();
