@@ -25,15 +25,15 @@
                 -webkit-tap-highlight-color: transparent;
                 outline: none !important;
             }
-
+        
             :focus {
                 outline: none !important;
             }
-
+        
             button:focus, div:focus, .square:focus {
                 outline: none !important;
             }
-    
+        
             body {
                 font-family: "Bookerly", "Caecilia", Georgia, serif;
                 margin: 0;
@@ -48,8 +48,9 @@
                 height: 100vh;
                 width: 100vw;
                 cursor: default;
+                background-color: #fff;
             }
-    
+        
             .container {
                 width: 100vw;
                 height: 100vh;
@@ -57,7 +58,7 @@
                 justify-content: center;
                 align-items: center;
             }
-    
+        
             .info, .info-bottom {
                 display: flex;
                 justify-content: space-between;
@@ -67,58 +68,42 @@
                 width: calc(100vw - 10px);
                 max-width: calc(100vh - 115px);
             }
-
+        
             .info {
                 transform: rotate(180deg);
             }
-    
+        
             .info-center {
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
+                justify-content: space-between;
                 align-items: center;
                 flex: 1;
                 min-width: 0;
-                padding-top: 2px;
+                height: 44px;
+                padding: 0 0 2px 0;
                 text-align: center;
             }
-
+        
             .captured-inline {
                 display: flex;
-                align-items: center;
+                align-items: flex-end;
                 gap: 2px;
-                padding: 0;
+                padding: 0 0 2px 0;
                 width: 70px;
                 flex: 0 0 70px;
+                height: 44px;
             }
-
-            .info-bottom .captured-inline {
-                align-self: flex-end;
-                margin-bottom: 2px;
-            }
-
-            .info .captured-inline {
-                align-self: flex-start;
-                margin-top: 2px; 
-            }
-
-            .info-bottom .info-center {
-                align-self: flex-start;
-            }
-            .info .info-center {
-                align-self: flex-end;
-            }
-
+        
             #capturedTopB, #capturedBottomW { 
                 justify-content: flex-start;
-                margin-left: 6px;
+                margin-left: 8px;
             }
-
             #capturedTopW, #capturedBottomB { 
                 justify-content: flex-end;
-                margin-right: 6px;
+                margin-right: 8px;
             }
-
+        
             .btn {
                 height: 44px;
                 padding: 0;
@@ -133,57 +118,52 @@
                 line-height: 40px;
                 cursor: pointer;
             }
-    
+        
             .btn:active {
                 background: #1a1a1a;
             }
-    
+        
             .btn:disabled {
                 background: #d0d0d0;
                 border-color: #b0b0b0;
                 color: #808080;
                 cursor: not-allowed;
             }
-    
+        
             .status, .status-bottom {
                 font-size: 14px;
                 font-weight: bold;
                 color: #1a1a1a;
                 line-height: 1.2;
+                margin-top: 2px;
                 white-space: nowrap;
                 text-align: center;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 min-width: 0;
             }
-    
-            .game-area {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-            }
-    
-            .main-column {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-            }
-    
+        
             .captured-row {
                 display: flex;
-                align-items: center;
+                align-items: flex-end;
                 gap: 1px;
             }
-    
-            .captured-count {
-                font-size: 12px;
+        
+            .captured-count, .score {
+                font-size: 13px;
                 font-weight: bold;
+                line-height: 1;
+                margin: 0;
+            }
+        
+            .captured-count {
                 color: #333;
             }
-    
+        
+            .score {
+                color: #005500;
+            }
+        
             .captured-symbol {
                 width: 16px;
                 height: 16px;
@@ -196,14 +176,22 @@
                 width: 100%;
                 height: 100%;
             }
-    
-            .score {
-                font-weight: bold;
-                color: #005500;
-                font-size: 13px;
-                line-height: 1;
+        
+            .game-area {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
             }
-    
+        
+            .main-column {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+        
             .board-container {
                 width: calc(100vw - 10px);
                 height: calc(100vw - 10px);
@@ -214,7 +202,7 @@
                 justify-content: center;
                 align-items: center;
             }
-    
+        
             .board {
                 position: relative;
                 width: 100%;
@@ -222,7 +210,7 @@
                 border: 2px solid #000;
                 background: #b58863;
             }
-    
+        
             .square {
                 position: absolute;
                 width: 12.5%;
@@ -231,20 +219,15 @@
                 justify-content: center;
                 align-items: center;
             }
-    
-            .square.light {
-                background-color: #F0E0C7;
-            }
-
-            .square.dark {
-                background-color: #b58863;
-            }
-    
+        
+            .square.light { background-color: #F0E0C7; }
+            .square.dark { background-color: #b58863; }
+        
             .square.selected {
                 background-color: #90a050 !important;
                 box-shadow: inset 0 0 0 3px #000 !important;
             }
-    
+        
             .square.possible-move::after {
                 content: '';
                 position: absolute;
@@ -253,7 +236,7 @@
                 background-color: rgba(60, 60, 60, 0.7);
                 border-radius: 50%;
             }
-    
+        
             .square.possible-capture::after {
                 content: '';
                 position: absolute;
@@ -263,16 +246,14 @@
                 border-radius: 50%;
                 box-sizing: border-box;
             }
-    
-            .square.check {
-                background-color: #cc5555 !important; 
-            }
-
+        
+            .square.check { background-color: #cc5555 !important; }
+        
             .square.last-move {
                 background-color: #bac84a !important;
                 box-shadow: inset 0 0 0 2px #000 !important;
             }
-    
+        
             .piece {
                 width: 100%;
                 height: 100%;
@@ -281,21 +262,19 @@
                 align-items: center;
                 pointer-events: none;
             }
-
+        
             .piece svg {
                 width: 75%;
                 height: 75%;
             }
-    
-            .board.black-turn .piece {
-                transform: rotate(180deg);
-            }
-    
+        
+            .board.black-turn .piece { transform: rotate(180deg); }
+        
             .rank1 { top: 87.5%; } .rank2 { top: 75%; } .rank3 { top: 62.5%; } .rank4 { top: 50%; }
             .rank5 { top: 37.5%; } .rank6 { top: 25%; } .rank7 { top: 12.5%; } .rank8 { top: 0%; }
             .file1 { left: 0%; } .file2 { left: 12.5%; } .file3 { left: 25%; } .file4 { left: 37.5%; }
             .file5 { left: 50%; } .file6 { left: 62.5%; } .file7 { left: 75%; } .file8 { left: 87.5%; }
-    
+        
             .promotion-modal {
                 position: fixed;
                 top: 0; left: 0; width: 100%; height: 100%;
@@ -303,27 +282,23 @@
                 display: flex; justify-content: center; align-items: center;
                 z-index: 1000;
             }
-
+        
             .promotion-content {
                 background: white; padding: 20px;
                 border: 2px solid #1a1a1a; border-radius: 8px;
                 text-align: center;
             }
-
-            .promotion-options {
-                display: flex; gap: 15px;
-            }
-
+        
+            .promotion-options { display: flex; gap: 15px; }
+        
             .promo-option {
                 cursor: pointer; width: 50px; height: 50px;
                 border: 1px solid #ccc; display: flex;
                 justify-content: center; align-items: center;
             }
-
-            .promo-option svg {
-                width: 70%; height: 70%;
-            }
-    
+        
+            .promo-option svg { width: 70%; height: 70%; }
+        
             @media (max-width: 600px) {
                 .btn { font-size: 18px; line-height: 44px; }
             }
@@ -853,8 +828,6 @@
         }
 
         function updateCapturedPieces() {
-            var tops = [document.getElementById('capturedTopW'), document.getElementById('capturedTopB')];
-            var bottoms = [document.getElementById('capturedBottomW'), document.getElementById('capturedBottomB')];
             var scoreTop = document.getElementById('scoreTop');
             var scoreBottom = document.getElementById('scoreBottom');
             
@@ -872,47 +845,46 @@
 
             var wAdv = wMat - bMat;
 
-            function render(cont, pieces) {
+            function render(contId, pieces, trophyColor) {
+                var cont = document.getElementById(contId);
                 if (!cont) return;
                 
                 var counts = {P: 0, N: 0, B: 0, R: 0, Q: 0};
-                var color = pieces.length > 0 ? pieces[0][0] : (cont.id.indexOf('W') !== -1 ? 'b' : 'w');
-                
                 for (var i = 0; i < pieces.length; i++) {
-                    var t = pieces[i][1];
-                    if (counts[t] !== undefined) counts[t]++;
+                    if (pieces[i][0] === trophyColor) {
+                        var t = pieces[i][1];
+                        if (counts[t] !== undefined) counts[t]++;
+                    }
                 }
 
                 var html = '';
                 var types = ['P', 'N', 'B', 'R', 'Q'];
-                
                 for (var i = 0; i < types.length; i++) {
                     var t = types[i];
                     if (counts[t] > 0) {
                         html += '<div class="captured-row"><span class="captured-count">' + counts[t] + '</span>';
-                        html += '<span class="captured-symbol">' + pieceSymbols[color + t] + '</span></div>';
+                        html += '<span class="captured-symbol">' + pieceSymbols[trophyColor + t] + '</span></div>';
                     }
                 }
-                
                 cont.innerHTML = html;
             }
 
-            render(tops[0], capturedPieces.w);
-            render(tops[1], capturedPieces.b);
-            render(bottoms[0], capturedPieces.w);
-            render(bottoms[1], capturedPieces.b);
+            // Рендерим трофеи: Белым показываем съеденные черные фигуры, Черным — белые.
+            render('capturedBottomW', capturedPieces.b, 'b');
+            render('capturedBottomB', capturedPieces.w, 'w');
+            render('capturedTopB', capturedPieces.w, 'w');
+            render('capturedTopW', capturedPieces.b, 'b');
 
-            if (scoreTop && scoreBottom) {
-                if (wAdv > 0) {
-                    scoreTop.textContent = '+' + wAdv;
-                    scoreBottom.textContent = '';
-                } else if (wAdv < 0) {
-                    scoreTop.textContent = '';
-                    scoreBottom.textContent = '+' + (-wAdv);
-                } else {
-                    scoreTop.textContent = '';
-                    scoreBottom.textContent = '';
-                }
+            // Преимущество пишем тому, кто выигрывает
+            if (wAdv > 0) {
+                scoreTop.textContent = '';
+                scoreBottom.textContent = '+' + wAdv;
+            } else if (wAdv < 0) {
+                scoreTop.textContent = '+' + (-wAdv);
+                scoreBottom.textContent = '';
+            } else {
+                scoreTop.textContent = '';
+                scoreBottom.textContent = '';
             }
         }
 
