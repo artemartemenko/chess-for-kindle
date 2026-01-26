@@ -1019,50 +1019,64 @@
         }
 
         function updateStatus() {
-            var status = '';
-            var moveColor = currentTurn === 'w' ? 'White to move' : 'Black to move';
+            var statusTop = '';
+            var statusBottom = '';
             isGameOver = false;
             
             if (isInsufficientMaterial()) {
-                status = 'Draw! (Insufficient Material)';
+                statusTop = statusBottom = 'Draw! (Insufficient Material)';
                 isGameOver = true;
             } else if (halfMoveClock >= 100) {
-                status = 'Draw! (50-move Rule)';
+                statusTop = statusBottom = 'Draw! (50-move Rule)';
                 isGameOver = true;
             } else if (isThreefoldRepetition()) {
-                status = 'Draw! (Threefold Repetition)';
+                statusTop = statusBottom = 'Draw! (Threefold Repetition)';
                 isGameOver = true;
             } else {
                 var inCheck = isKingInCheck(currentTurn);
                 var canMove = hasLegalMoves(currentTurn);
                 
-                if (inCheck) {
-                    status = !canMove ? ('Checkmate! ' + (currentTurn === 'w' ? 'Black' : 'White') + ' wins') : (moveColor + ' (Check!)');
-                    if (!canMove) isGameOver = true;
+                if (!canMove) {
+                    isGameOver = true;
+                    if (inCheck) {
+                        var winner = (currentTurn === 'w' ? 'Black' : 'White');
+                        statusTop = statusBottom = 'Checkmate! ' + winner + ' wins';
+                    } else {
+                        statusTop = statusBottom = 'Stalemate!';
+                    }
                 } else {
-                    status = !canMove ? 'Stalemate!' : moveColor;
-                    if (!canMove) isGameOver = true;
+                    var checkSuffix = inCheck ? ' (Check!)' : '';
+                    
+                    if (currentTurn === 'w') {
+                        statusBottom = 'Your move' + checkSuffix;
+                        statusTop = 'White to move' + checkSuffix;
+                    } else {
+                        statusTop = 'Your move' + checkSuffix;
+                        statusBottom = 'Black to move' + checkSuffix;
+                    }
                 }
             }
             
-            for (var i = 0; i < statusElements.length; i++) {
-                if (statusElements[i]) {
-                    statusElements[i].textContent = status;
-                    var isTop = statusElements[i].id === 'status';
-                    
-                    statusElements[i].style.visibility = (isGameOver || (currentTurn === 'w' ? !isTop : isTop)) ? 'visible' : 'hidden';
-                }
+            var elTop = document.getElementById('status');
+            var elBottom = document.getElementById('statusBottom');
+            
+            if (elTop) {
+                elTop.textContent = statusTop;
+                elTop.style.visibility = 'visible';
             }
+            if (elBottom) {
+                elBottom.textContent = statusBottom;
+                elBottom.style.visibility = 'visible';
+            }
+
             if (isGameOver && !statsSent && gameStartTime) {
                 var gameEndTime = Date.now();
                 var durationSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
-                
                 gtag('event', 'game_finish', {
                     'duration': durationSeconds,
-                    'result': status,
+                    'result': statusTop,
                     'moves': gameHistory.length
                 });
-                
                 statsSent = true;
             }
         }
