@@ -343,7 +343,10 @@
         </div>
 
     <script>
+        function isKindle() { return /Kindle|Silk/i.test(navigator.userAgent); }
+
         function refreshEink() {
+            if (!isKindle()) return;
             var overlay = document.getElementById('eink-refresh-overlay');
             if (!overlay) return;
             
