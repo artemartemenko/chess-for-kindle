@@ -22,13 +22,9 @@
                 padding: 0;
                 box-sizing: border-box;
                 -webkit-tap-highlight-color: rgba(0,0,0,0);
-                -webkit-tap-highlight-color: transparent;
                 outline: none !important;
             }
-        
-            :focus { outline: none !important; }
-            button:focus, div:focus, .square:focus { outline: none !important; }
-        
+                
             html, body {
                 height: 100%;
                 width: 100%;
@@ -253,9 +249,12 @@
             }
     
             .promotion-content {
-                background: white; padding: 25px;
-                border: 2px solid #000; border-radius: 8px;
+                background: white; 
+                padding: 25px;
+                border: 2px solid #000; 
+                border-radius: 8px;
                 text-align: center;
+                max-width: 90%;
             }
     
             .promotion-title {
@@ -312,12 +311,20 @@
                     </div>
 
                     <div style="margin: 20px 0;">
-                        <button id="newGameBtn" class="btn" style="width: 100%; margin-bottom: 10px;">
-                            New game
-                        </button>
-                        <button id="continueGameBtn" class="btn" style="width: 100%;">
-                            Continue
-                        </button>
+                        <button id="newGameBtn" class="btn" style="width: 100%; margin-bottom: 10px;">New game</button>
+                        <button id="continueGameBtn" class="btn" style="width: 100%;">Continue</button>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <a id="gitHubLink" href="https://github.com/artemartemenko/chess-for-kindle" target="_blank" 
+                           style="font-size: 12px; text-decoration: underline; color: #000; display: inline-block; ">
+                           GitHub
+                        </a>
+                        <a id="version" target="_blank" 
+                           style="font-size: 12px; color: #000; display: inline-block; ">
+                           | Version 1.1
+                        </a>
+                        <a></a>
                     </div>
                 </div>
             </div>
@@ -374,6 +381,39 @@
             }, 100); 
         }
 
+        function startNewGame() {
+            board = [
+                ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+                ['bP','bP','bP','bP','bP','bP','bP','bP'],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['wP','wP','wP','wP','wP','wP','wP','wP'],
+                ['wR','wN','wB','wQ','wK','wB','wN','wR']
+            ];
+            currentTurn = 'w';
+            gameHistory = [];
+            historyIndex = -1;
+            capturedPieces = {w: [], b: []};
+            lastMove = null;
+            enPassantTarget = null;
+            castlingRights = {w: {k: true, q: true}, b: {k: true, q: true}};
+            halfMoveClock = 0;
+            isGameOver = false;
+            pendingPromotion = null;
+            statsSent = false;
+            gameStartTime = Date.now();
+
+            clearSavedGame();
+            initBoard();
+            saveState();
+            renderBoard();
+            refreshEink();
+            
+            if (typeof gtag === 'function') gtag('event', 'game_start', { 'method': 'manual' });
+        }
+
         var pieceSymbols = {};
         var pieceValues = {'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 0};
         var KNIGHT_OFFSETS = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
@@ -384,16 +424,7 @@
             'Q': [[-1,-1],[-1,1],[1,-1],[1,1],[-1,0],[1,0],[0,-1],[0,1]]
         };
 
-        var board = [
-            ['bR','bN','bB','bQ','bK','bB','bN','bR'],
-            ['bP','bP','bP','bP','bP','bP','bP','bP'],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['wP','wP','wP','wP','wP','wP','wP','wP'],
-            ['wR','wN','wB','wQ','wK','wB','wN','wR']
-        ];
+        var board;
 
         var currentTurn = 'w';
         var selectedSquare = null;
@@ -414,9 +445,6 @@
         var forwardButtons = [document.getElementById('forwardBtn'), document.getElementById('forwardBtnBottom')];
         var promotionModal = document.getElementById('promotionModal');
         var squareElements = [];
-
-        var gameStartTime = null;
-        var statsSent = false;
 
         var isRotationLocked = localStorage.getItem('chessRotationLocked') === 'true';
         var lastClickTime = 0;
@@ -455,6 +483,7 @@
                 gameHistory = data.gameHistory;
                 historyIndex = data.historyIndex;
                 isGameOver = data.isGameOver;
+                
                 renderBoard();
                 return true;
             } catch(e) {
@@ -465,6 +494,15 @@
 
         function clearSavedGame() {
             localStorage.removeItem('chessGameSave');
+        }
+
+
+        function getBoardHash(b, turn, cast, ep) {
+            var s = "";
+            for (var i = 0; i < 8; i++) s += b[i].join(",") + "/";
+            s += "|" + turn + "|" + cast.w.k + cast.w.q + cast.b.k + cast.b.q;
+            if (ep) s += "|" + ep.row + "," + ep.col;
+            return s;
         }
 
         (function initPieceSymbols() {
@@ -518,9 +556,6 @@
                     squareElements.push(square);
                 }
             }
-            
-            saveState();
-            renderBoard();
         }
 
         function renderBoard() {
@@ -565,8 +600,8 @@
             }
 
             updateCapturedPieces();
-            updateButtons();
             updateStatus();
+            updateButtons();
         }
 
         function handleSquareClick(e) {
@@ -895,20 +930,19 @@
 
         function saveState() {
             gameHistory = gameHistory.slice(0, historyIndex + 1);
+            var stateHash = getBoardHash(board, currentTurn, castlingRights, enPassantTarget);
+            
             gameHistory.push({
                 board: cloneBoard(board),
                 currentTurn: currentTurn,
                 capturedPieces: {w: capturedPieces.w.slice(), b: capturedPieces.b.slice()},
-                lastMove: lastMove ? {from: {row: lastMove.from.row, col: lastMove.from.col}, to: {row: lastMove.to.row, col: lastMove.to.col}} : null,
+                lastMove: lastMove ? JSON.parse(JSON.stringify(lastMove)) : null,
                 enPassantTarget: enPassantTarget ? {row: enPassantTarget.row, col: enPassantTarget.col} : null,
-                castlingRights: {
-                    w: {k: castlingRights.w.k, q: castlingRights.w.q},
-                    b: {k: castlingRights.b.k, q: castlingRights.b.q}
-                },
-                halfMoveClock: halfMoveClock
+                castlingRights: JSON.parse(JSON.stringify(castlingRights)),
+                halfMoveClock: halfMoveClock,
+                hash: stateHash
             });
             historyIndex++;
-
             if (hasAutoSaved) saveGame();
         }
 
@@ -1025,32 +1059,11 @@
 
         function isThreefoldRepetition() {
             if (historyIndex < 8) return false;
-
-            function hash(b, turn, cast, ep) {
-                var s = "";
-                for (var i = 0; i < 8; i++) {
-                    s += b[i].join(",") + "/"; 
-                }
-                s += "|" + turn + "|" + cast.w.k + cast.w.q + cast.b.k + cast.b.q;
-                if (ep) s += "|" + ep.row + "," + ep.col;
-                return s;
-            }
-
-            var curr = hash(board, currentTurn, castlingRights, enPassantTarget);
+            var currHash = gameHistory[historyIndex].hash;
             var reps = 0;
-
             for (var i = 0; i <= historyIndex; i++) {
-                var s = gameHistory[i];
-                if (!s) continue;
-                
-                var sRights = s.castlingRights || {w: {k: true, q: true}, b: {k: true, q: true}};
-                var h = hash(s.board, s.currentTurn, sRights, s.enPassantTarget);
-                
-                if (h === curr) {
-                    reps++;
-                }
+                if (gameHistory[i].hash === currHash) reps++;
             }
-
             return reps >= 3;
         }
 
@@ -1098,11 +1111,9 @@
             
             if (elTop) {
                 elTop.textContent = statusTop;
-                elTop.style.visibility = 'visible';
             }
             if (elBottom) {
                 elBottom.textContent = statusBottom;
-                elBottom.style.visibility = 'visible';
             }
 
             if (isGameOver && !statsSent && gameStartTime) {
@@ -1136,8 +1147,20 @@
             for (var i = 0; i < backButtons.length; i++) {
                 if (backButtons[i]) backButtons[i].disabled = historyIndex <= 0;
             }
+
             for (var i = 0; i < forwardButtons.length; i++) {
-                if (forwardButtons[i]) forwardButtons[i].disabled = historyIndex >= gameHistory.length - 1;
+                var btn = forwardButtons[i];
+                if (!btn) continue;
+
+                if (isGameOver && historyIndex === gameHistory.length - 1) {
+                    btn.disabled = false;
+                    btn.textContent = 'New';
+                    btn.style.fontSize = '16px'; 
+                } else {
+                    btn.disabled = historyIndex >= gameHistory.length - 1;
+                    btn.textContent = '>';
+                    btn.style.fontSize = '24px';
+                }
             }
         }
 
@@ -1152,7 +1175,13 @@
         for (var i = 0; i < forwardButtons.length; i++) {
             if (forwardButtons[i]) {
                 forwardButtons[i].onclick = function() {
-                    if (historyIndex < gameHistory.length - 1) restoreState(historyIndex + 1);
+                    if (this.textContent === 'New') {
+                        startNewGame();
+                    } else {
+                        if (historyIndex < gameHistory.length - 1) {
+                            restoreState(historyIndex + 1);
+                        }
+                    }
                 };
             }
         }
@@ -1197,35 +1226,44 @@
             var newGameBtn = document.getElementById('newGameBtn');
             var continueGameBtn = document.getElementById('continueGameBtn');
             
-            var hasSavedGame = localStorage.getItem('chessGameSave') !== null;
+            var savedRaw = localStorage.getItem('chessGameSave');
+            var isGameInProgress = false;
+
+            if (savedRaw) {
+                try {
+                    var data = JSON.parse(savedRaw);
+                    if (data.historyIndex > 0) {
+                        isGameInProgress = true;
+                    }
+                } catch(e) { 
+                    isGameInProgress = false; 
+                }
+            }
             
-            if (hasSavedGame) {
+            if (isGameInProgress) {
                 welcomeModal.style.display = 'flex';
                 
                 newGameBtn.onclick = function() {
                     welcomeModal.style.display = 'none';
-                    clearSavedGame();
-                    initBoard();
+                    startNewGame();
                     hasAutoSaved = true;
-                    refreshEink();
-                    gameStartTime = Date.now(); 
-                    statsSent = false;
-                    gtag('event', 'game_start', { 'method': 'manual' });
                 };
                 
                 continueGameBtn.onclick = function() {
                     welcomeModal.style.display = 'none';
                     initBoard();
-                    loadGame();
-                    hasAutoSaved = true;
-                    refreshEink();
-                    gameStartTime = Date.now();
-                    statsSent = false;
+                    if (loadGame()) {
+                        hasAutoSaved = true;
+                        refreshEink();
+                        gameStartTime = Date.now();
+                        statsSent = false;
+                    } else {
+                        startNewGame();
+                    }
                 };
             } else {
-                initBoard();
+                startNewGame();
                 hasAutoSaved = true;
-                setTimeout(refreshEink, 500);
             }
         }
 
@@ -1234,22 +1272,6 @@
         } else {
             startGame();
         }
-
-
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                isRotationLocked = !isRotationLocked;
-                
-                var statusMsg = isRotationLocked ? "Rotation: Fixed" : "Rotation: Auto";
-                document.getElementById('status').textContent = statusMsg;
-                document.getElementById('statusBottom').textContent = statusMsg;
-                
-                setTimeout(function() {
-                    renderBoard();
-                }, 500);
-            }
-        }, { passive: false });
     </script>
 </body>
 </html>
