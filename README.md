@@ -22,7 +22,7 @@ Just sit opposite each other and play.
 ## Features
 
 - **Made for E-Ink:** High contrast, no animations, no flicker.
-- **Two humans, one device:** The board rotates automatically for face-to-face play.
+- **Two humans, one device:** The board rotates automatically for face-to-face play, or use a double-tap on an empty square to keep your opponent’s pieces flipped.
 - **Lightweight:** Loads fast, drains almost no battery.
 
 
@@ -31,8 +31,6 @@ Just sit opposite each other and play.
 1. Open https://artemartemenko.github.io/chess-for-kindle/ or https://is.gd/chesskindle in the Kindle Web Browser.
 2. Sit opposite each other.
 3. Make the first move.
-
-Settings: Double-tap any empty square to **lock** piece rotation.
 
 Tip: Bookmark the game page so you don't lose it. If you don't open other websites, the game will even launch automatically when you open your browser.
 
