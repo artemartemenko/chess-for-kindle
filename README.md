@@ -36,6 +36,14 @@ Settings: Double-tap any empty square to **lock** piece rotation.
 
 Tip: Bookmark the game page so you don't lose it. If you don't open other websites, the game will even launch automatically when you open your browser.
 
+
+## Offline mode
+
+Offline mode is possible!
+Kindle does not allow locally saved web pages to be opened, and without an internet connection you may get a connection error after reloading the game page.
+However, there are two ways to **restore the chess page offline**:
+close the browser and open it again, or navigate to any other address (just add any character to the URL) and then return to the previous page using the Back button — the game will be restored from the cache.
+
 You can support ongoing development of this project:
 
 <p align="center">
