@@ -1,8 +1,7 @@
 ## Changelog
 
-
 ### Version 1.2 - 2025-01-28
-* Offline 
+* Chess can now be played offline!
 
 ### Version 1.1 - 2025-01-26
 * Redesigned the interface: updated chess pieces, the board now occupies more screen space, plus various minor improvements.

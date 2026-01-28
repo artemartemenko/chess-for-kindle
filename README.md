@@ -13,6 +13,7 @@ No accounts. No AI. No distractions. Just chess.
 
 - **Made for E-Ink:** High contrast, no animations, no flicker.
 - **Lightweight:** Loads fast, drains almost no battery.
+- **Offline mode**: The game works without an internet connection! However, it’s recommended to connect occasionally and refresh the page to get the latest updates.
 - **Game persistence:** The chess game can be resumed after closing the browser or reloading the page.
 - **Two humans, one device:** The board rotates automatically for face-to-face play, or use a double-tap on an empty square to keep your opponent’s pieces flipped.
 
@@ -31,18 +32,7 @@ No accounts. No AI. No distractions. Just chess.
 Tip: Bookmark the game page so you don't lose it. If you don't open other websites, the game will even launch automatically when you open your browser.
 
 
-## Offline mode
-
-Offline mode is possible!
-Kindle does not allow locally saved web pages to be opened, and without an internet connection you may get a connection error after reloading the game page.
-However, there are two ways to **restore the chess page offline**:
-
-* close the browser and open it again (does not always work)
-* navigate to any other address (just add any character to the URL) and then return to the previous page using the Back button — the game will be restored from the cache.
-
-At the same time, I am exploring the possibility of a more convenient solution for offline play.
-
-You can support ongoing development of this project:
+You can support the further development of this and new projects for Kindle:
 
 <p align="center">
   <a href="https://ko-fi.com/artemartemenko">
