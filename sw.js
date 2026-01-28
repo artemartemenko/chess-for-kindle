@@ -1,42 +1,45 @@
-const CACHE_NAME = 'chess-v9';
+const CACHE_NAME = 'chess-v10';
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(['./', './index.html']))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.filter(name => name.startsWith('chess-') && name !== CACHE_NAME)
-          .map(name => caches.delete(name))
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
       );
     })
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
-  const url = event.request.url;
-  
-  if (!url.startsWith(self.location.origin) || event.request.method !== 'GET') {
+  if (event.request.url.includes('google-analytics.com') || 
+      event.request.url.includes('googletagmanager.com') ||
+      event.request.url.includes('gtag') ||
+      event.request.url.includes('/g/collect')) {
     return;
   }
 
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        if (response.status === 200) {
-          caches.open(CACHE_NAME).then(cache => 
-            cache.put(event.request, response.clone())
-          );
-        }
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME)
+          .then(cache => cache.put(event.request, responseClone));
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
