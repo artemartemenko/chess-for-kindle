@@ -44,6 +44,8 @@ Kindle does not allow locally saved web pages to be opened, and without an inter
 However, there are two ways to **restore the chess page offline**:
 close the browser and open it again, or navigate to any other address (just add any character to the URL) and then return to the previous page using the Back button — the game will be restored from the cache.
 
+At the same time, I am exploring the possibility of a more convenient solution for offline play.
+
 You can support ongoing development of this project:
 
 <p align="center">
