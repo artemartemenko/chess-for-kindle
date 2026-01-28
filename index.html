@@ -1226,63 +1226,46 @@
             var newGameBtn = document.getElementById('newGameBtn');
             var continueGameBtn = document.getElementById('continueGameBtn');
             
-            if (window.location.hash === '#game') {
-                var savedRaw = localStorage.getItem('chessGameSave');
-                var isGameInProgress = false;
+            var savedRaw = localStorage.getItem('chessGameSave');
+            var isGameInProgress = false;
 
-                if (savedRaw) {
-                    try {
-                        var data = JSON.parse(savedRaw);
-                        if (data.historyIndex > 0) {
-                            isGameInProgress = true;
-                        }
-                    } catch(e) { 
-                        isGameInProgress = false; 
+            if (savedRaw) {
+                try {
+                    var data = JSON.parse(savedRaw);
+                    if (data.historyIndex > 0) {
+                        isGameInProgress = true;
                     }
+                } catch(e) { 
+                    isGameInProgress = false; 
                 }
+            }
+            
+            if (isGameInProgress) {
+                welcomeModal.style.display = 'flex';
                 
-                if (isGameInProgress) {
-                    welcomeModal.style.display = 'flex';
-                    continueGameBtn.style.display = 'block';
-                    newGameBtn.textContent = 'New game';
-                    
-                    newGameBtn.onclick = function() {
-                        welcomeModal.style.display = 'none';
-                        startNewGame();
-                        hasAutoSaved = true;
-                    };
-                    
-                    continueGameBtn.onclick = function() {
-                        welcomeModal.style.display = 'none';
-                        initBoard();
-                        if (loadGame()) {
-                            hasAutoSaved = true;
-                            refreshEink();
-                            gameStartTime = Date.now();
-                            statsSent = false;
-                        } else {
-                            startNewGame();
-                        }
-                    };
-                } else {
+                newGameBtn.onclick = function() {
+                    welcomeModal.style.display = 'none';
                     startNewGame();
                     hasAutoSaved = true;
-                }
-            } else {
-                welcomeModal.style.display = 'flex';
-                continueGameBtn.style.display = 'none';
-                
-                newGameBtn.textContent = 'Start Game';
-                newGameBtn.onclick = function() {
-                    window.location.hash = '#game';
-                    window.location.reload();
                 };
+                
+                continueGameBtn.onclick = function() {
+                    welcomeModal.style.display = 'none';
+                    initBoard();
+                    if (loadGame()) {
+                        hasAutoSaved = true;
+                        refreshEink();
+                        gameStartTime = Date.now();
+                        statsSent = false;
+                    } else {
+                        startNewGame();
+                    }
+                };
+            } else {
+                startNewGame();
+                hasAutoSaved = true;
             }
         }
-
-        window.addEventListener('hashchange', function() {
-            window.location.reload();
-        });
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', startGame);
