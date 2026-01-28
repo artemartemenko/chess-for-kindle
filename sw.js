@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chess-v10';
+const CACHE_NAME = 'chess-v11';
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -23,10 +23,12 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.url.includes('google-analytics.com') || 
-      event.request.url.includes('googletagmanager.com') ||
-      event.request.url.includes('gtag') ||
-      event.request.url.includes('/g/collect')) {
+  const url = event.request.url;
+  
+  if (url.includes('google-analytics.com') || 
+      url.includes('googletagmanager.com') ||
+      url.includes('gtag')) {
+    event.respondWith(fetch(event.request));
     return;
   }
 
