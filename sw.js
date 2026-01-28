@@ -1,5 +1,5 @@
-const CACHE_NAME = 'chess-v4';
-const ANALYTICS_QUEUE = 'analytics-queue';
+const CACHE_NAME = 'chess-v5';
+const ANALYTICS_QUEUE = 'analytics-queue-v1';
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -8,17 +8,46 @@ self.addEventListener('install', event => {
   );
 });
 
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    Promise.all([
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME && cacheName !== ANALYTICS_QUEUE) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      sendQueuedAnalytics()
+    ])
+  );
+});
+
 self.addEventListener('fetch', event => {
-  if (event.request.url.includes('google-analytics.com') || 
-      event.request.url.includes('googletagmanager.com')) {
+  const url = event.request.url;
+  
+  if (url.includes('google-analytics.com') || 
+      url.includes('googletagmanager.com') ||
+      url.includes('/g/collect')) {
     
     event.respondWith(
       fetch(event.request.clone())
-        .catch(() => {
-          return caches.open(ANALYTICS_QUEUE).then(cache => {
-            cache.put(event.request.url + '?' + Date.now(), event.request.clone());
-            return new Response('', { status: 200 });
-          });
+        .catch(async () => {
+          try {
+            const cache = await caches.open(ANALYTICS_QUEUE);
+            const queuedRequest = new Request(url + '&qt=' + Date.now(), {
+              method: event.request.method,
+              headers: event.request.headers,
+              body: event.request.method === 'POST' ? await event.request.clone().text() : null
+            });
+            await cache.put(queuedRequest, new Response('', {status: 200}));
+            console.log('Analytics queued:', url);
+          } catch (err) {
+            console.error('Failed to queue analytics:', err);
+          }
+          return new Response('', { status: 200 });
         })
     );
     return;
@@ -39,25 +68,30 @@ self.addEventListener('fetch', event => {
 });
 
 async function sendQueuedAnalytics() {
-  const cache = await caches.open(ANALYTICS_QUEUE);
-  const requests = await cache.keys();
-  
-  for (const request of requests) {
-    try {
-      await fetch(request);
-      await cache.delete(request);
-    } catch (err) {
-      console.log('Failed to send analytics:', err);
+  try {
+    const cache = await caches.open(ANALYTICS_QUEUE);
+    const requests = await cache.keys();
+    
+    console.log('Sending queued analytics:', requests.length, 'requests');
+    
+    for (const request of requests) {
+      try {
+        const response = await fetch(request.clone());
+        if (response.ok) {
+          await cache.delete(request);
+          console.log('Analytics sent:', request.url);
+        }
+      } catch (err) {
+        console.log('Failed to send analytics (will retry):', err);
+      }
     }
+  } catch (err) {
+    console.error('Error in sendQueuedAnalytics:', err);
   }
 }
 
-self.addEventListener('activate', event => {
-  event.waitUntil(sendQueuedAnalytics());
-});
-
 self.addEventListener('message', event => {
-  if (event.data.type === 'SEND_ANALYTICS') {
-    sendQueuedAnalytics();
+  if (event.data && event.data.type === 'SEND_ANALYTICS') {
+    event.waitUntil(sendQueuedAnalytics());
   }
 });
