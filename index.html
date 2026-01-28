@@ -1279,6 +1279,14 @@
             navigator.serviceWorker.register('./sw.js')
                 .then(reg => console.log('SW registered'))
                 .catch(err => console.log('SW error:', err));
+            
+            window.addEventListener('online', () => {
+                navigator.serviceWorker.ready.then(reg => {
+                    if (reg.active) {
+                        reg.active.postMessage({type: 'SEND_ANALYTICS'});
+                    }
+                });
+            });
         }
     </script>
 </body>
