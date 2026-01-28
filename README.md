@@ -28,18 +28,13 @@ Just sit opposite each other and play.
 - **Two humans, one device:** The board rotates automatically for face-to-face play, or use a double-tap on an empty square to keep your opponent’s pieces flipped.
 
 <p align="center">
-  <table>
-    <tr>
-      <td align="center">
-        <img src="assets/mode1.gif" width="200"><br>
-        <i>Mode 1</i>
-      </td>
-      <td align="center">
-        <img src="assets/mode2.gif" width="200"><br>
-        <i>Mode 2</i>
-      </td>
-    </tr>
-  </table>
+  <img src="assets/mode1.gif" width="200">
+  <img src="assets/mode2.gif" width="200">
+</p>
+<p align="center">
+  <i>Mode 1</i>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <i>Mode 2</i>
 </p>
 
 
