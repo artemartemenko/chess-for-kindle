@@ -381,45 +381,6 @@
             }, 100); 
         }
 
-        function trackEvent(eventName, params) {
-            if (navigator.onLine) {
-                if (typeof gtag === 'function') {
-                    gtag('event', eventName, params);
-                }
-            } else {
-                var queue = JSON.parse(localStorage.getItem('analyticsQueue') || '[]');
-                queue.push({ event: eventName, params: params, timestamp: Date.now() });
-                localStorage.setItem('analyticsQueue', JSON.stringify(queue));
-                console.log('📊 Analytics queued (offline):', eventName);
-            }
-        }
-
-        window.addEventListener('online', function() {
-            var queue = JSON.parse(localStorage.getItem('analyticsQueue') || '[]');
-            console.log('📊 Sending queued analytics:', queue.length, 'events');
-            queue.forEach(function(item) {
-                if (typeof gtag === 'function') {
-                    gtag('event', item.event, item.params);
-                }
-            });
-            if (queue.length > 0) {
-                localStorage.removeItem('analyticsQueue');
-            }
-        });
-
-        window.addEventListener('load', function() {
-            var queue = JSON.parse(localStorage.getItem('analyticsQueue') || '[]');
-            if (queue.length > 0) {
-                console.log('📊 Sending queued analytics on load:', queue.length, 'events');
-                queue.forEach(function(item) {
-                    if (typeof gtag === 'function') {
-                        gtag('event', item.event, item.params);
-                    }
-                });
-                localStorage.removeItem('analyticsQueue');
-            }
-        });
-
         function startNewGame() {
             board = [
                 ['bR','bN','bB','bQ','bK','bB','bN','bR'],
@@ -450,7 +411,7 @@
             renderBoard();
             refreshEink();
             
-            trackEvent('game_start', { 'method': 'manual' });
+            if (typeof gtag === 'function') gtag('event', 'game_start', { 'method': 'manual' });
         }
 
         var pieceSymbols = {};
@@ -1158,7 +1119,7 @@
             if (isGameOver && !statsSent && gameStartTime) {
                 var gameEndTime = Date.now();
                 var durationSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
-                trackEvent('game_finish', {
+                gtag('event', 'game_finish', {
                     'duration': durationSeconds,
                     'result': statusTop,
                     'moves': gameHistory.length
@@ -1318,14 +1279,6 @@
             navigator.serviceWorker.register('./sw.js')
                 .then(reg => console.log('SW registered'))
                 .catch(err => console.log('SW error:', err));
-            
-            window.addEventListener('online', () => {
-                navigator.serviceWorker.ready.then(reg => {
-                    if (reg.active) {
-                        reg.active.postMessage({type: 'SEND_ANALYTICS'});
-                    }
-                });
-            });
         }
     </script>
 </body>
