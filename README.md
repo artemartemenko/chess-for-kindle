@@ -32,7 +32,7 @@ Just sit opposite each other and play.
   <img src="assets/mode2.gif" width="200" style="margin: 0 20px;">
   <br>
   <span style="margin-right: 100px;"><i>Mode 1</i></span>
-  <span style="margin-right: 100px;">><i>Mode 2</i></span>
+  <span style="margin-right: 100px;"><i>Mode 2</i></span>
 </div>
 
 
