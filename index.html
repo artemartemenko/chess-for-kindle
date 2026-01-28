@@ -1221,18 +1221,15 @@
             };
         }
 
-        window.addEventListener('popstate', function(event) {
-            window.location.reload();
-        });
-
         function startGame() {
-            if (!window.history.state || !window.history.state.chess) {
-                window.history.pushState({chess: true}, '', window.location.href);
-            }
-
             var welcomeModal = document.getElementById('welcomeModal');
             var newGameBtn = document.getElementById('newGameBtn');
             var continueGameBtn = document.getElementById('continueGameBtn');
+            
+            setTimeout(function() {
+                window.history.replaceState({chess: 'initial'}, '', window.location.href);
+                window.history.pushState({chess: 'current'}, '', window.location.href);
+            }, 100);
             
             var savedRaw = localStorage.getItem('chessGameSave');
             var isGameInProgress = false;
@@ -1274,6 +1271,11 @@
                 hasAutoSaved = true;
             }
         }
+
+        window.addEventListener('popstate', function(event) {
+            window.location.reload();
+        });
+
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', startGame);
