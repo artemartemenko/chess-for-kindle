@@ -1221,13 +1221,10 @@
             };
         }
 
-        window.addEventListener('popstate', function(event) {
-            window.location.reload();
-        });
-
         function startGame() {
-            if (!window.history.state || !window.history.state.chess) {
-                window.history.pushState({chess: true}, '', window.location.href);
+            if (window.history.state === null) {
+                window.history.pushState({chess: 'initial'}, '', window.location.href);
+                window.history.pushState({chess: 'current'}, '', window.location.href);
             }
 
             var welcomeModal = document.getElementById('welcomeModal');
@@ -1280,6 +1277,12 @@
         } else {
             startGame();
         }
+
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.chess) {
+                window.location.reload();
+            }
+        });
     </script>
 </body>
 </html>
