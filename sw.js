@@ -1,4 +1,5 @@
-const CACHE_NAME = 'chess-v1';
+const CACHE_NAME = 'chess-v1.2';
+const ANALYTICS_QUEUE = 'analytics-queue';
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -9,9 +10,17 @@ self.addEventListener('install', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.url.includes('google-analytics.com') || 
-      event.request.url.includes('googletagmanager.com') ||
-      event.request.url.includes('gtag') ||
-      event.request.url.includes('/g/collect')) {
+      event.request.url.includes('googletagmanager.com')) {
+    
+    event.respondWith(
+      fetch(event.request.clone())
+        .catch(() => {
+          return caches.open(ANALYTICS_QUEUE).then(cache => {
+            cache.put(event.request.url + '?' + Date.now(), event.request.clone());
+            return new Response('', { status: 200 });
+          });
+        })
+    );
     return;
   }
 
@@ -27,4 +36,28 @@ self.addEventListener('fetch', event => {
         return caches.match(event.request);
       })
   );
+});
+
+async function sendQueuedAnalytics() {
+  const cache = await caches.open(ANALYTICS_QUEUE);
+  const requests = await cache.keys();
+  
+  for (const request of requests) {
+    try {
+      await fetch(request);
+      await cache.delete(request);
+    } catch (err) {
+      console.log('Failed to send analytics:', err);
+    }
+  }
+}
+
+self.addEventListener('activate', event => {
+  event.waitUntil(sendQueuedAnalytics());
+});
+
+self.addEventListener('message', event => {
+  if (event.data.type === 'SEND_ANALYTICS') {
+    sendQueuedAnalytics();
+  }
 });
