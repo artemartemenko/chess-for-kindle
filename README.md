@@ -3,6 +3,7 @@
 A simple chess game for **two people on one Kindle**.
 
 For quiet evenings at home, slow mornings in a cafe, park, or long trips where you just want something simple and real.
+
 No accounts. No AI. No distractions.  
 Just chess.
 
