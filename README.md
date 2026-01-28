@@ -1,10 +1,8 @@
 # Chess for Kindle
 
-A simple chess game for **two people on one Kindle**. For quiet evenings at home, slow mornings in a cafe, park, or long trips where you just want something simple and real.
+A simple chess game for **two people on one Kindle**. Turn your eReader into a minimal, paper-like chessboard you can share with another person. For quiet evenings at home, slow mornings in a cafe, a park, or long trips where you just want something simple and real.
 
 No accounts. No AI. No distractions. Just chess.
-
-This project turns your Kindle into a minimal, paper-like chessboard you can share with another person.
 
 <p align="center">
   <img src="assets/preview.jpg" width="600">
