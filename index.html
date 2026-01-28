@@ -1221,11 +1221,15 @@
             };
         }
 
+        window.addEventListener('popstate', function(event) {
+            window.location.reload();
+        });
+
         function startGame() {
-            if (window.history.state === null) {
+            if (!window.history.state || !window.history.state.chess) {
                 window.history.pushState({chess: true}, '', window.location.href);
             }
-            
+
             var welcomeModal = document.getElementById('welcomeModal');
             var newGameBtn = document.getElementById('newGameBtn');
             var continueGameBtn = document.getElementById('continueGameBtn');
