@@ -11,8 +11,7 @@ No accounts. No AI. No distractions. Just chess.
 
 ## Why this exists
 
-eReader screens feel close to paper.  
-This project turns your Kindle into a minimal, paper-like chessboard you can share with another person.
+eReader screens feel close to paper. This project turns your Kindle into a minimal, paper-like chessboard you can share with another person.
 
 
 ## Features
