@@ -42,7 +42,9 @@ Tip: Bookmark the game page so you don't lose it. If you don't open other websit
 Offline mode is possible!
 Kindle does not allow locally saved web pages to be opened, and without an internet connection you may get a connection error after reloading the game page.
 However, there are two ways to **restore the chess page offline**:
-close the browser and open it again (does not always work), or navigate to any other address (just add any character to the URL) and then return to the previous page using the Back button — the game will be restored from the cache.
+
+* close the browser and open it again (does not always work)
+* navigate to any other address (just add any character to the URL) and then return to the previous page using the Back button — the game will be restored from the cache.
 
 At the same time, I am exploring the possibility of a more convenient solution for offline play.
 
