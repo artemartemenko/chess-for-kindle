@@ -57,11 +57,17 @@ You can support ongoing development of this project:
 
 Should work on most Kindles and other devices with a browser and a touchscreen.
 
-Tested on:
+<details>
+<summary><strong>Tested on</strong></summary>
+
 - **Kindle 10 (10th Gen)**
 - **Kindle Paperwhite 4 (10th Gen)**
 - **Kindle Paperwhite 5 (11th Gen)**
-- **iPad Pro 13-inch (M4)**
+- **iPad (9th Gen)**
+- **iPad Pro (2nd Gen)**
+- **iPad Pro (7th Gen, M4, 13-inch)**
+
+</details>
 
 
 ## License
