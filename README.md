@@ -27,18 +27,13 @@ Just sit opposite each other and play.
 - **Game persistence:** The chess game can be resumed after closing the browser or reloading the page.
 - **Two humans, one device:** The board rotates automatically for face-to-face play, or use a double-tap on an empty square to keep your opponent’s pieces flipped.
 
-<table align="center" style="border-collapse: collapse; border: none;">
-  <tr>
-    <td align="center" style="border: none; padding: 10px;">
-      <img src="assets/mode1.gif" width="200"><br>
-      <sub><i>Mode 1</i></sub>
-    </td>
-    <td align="center" style="border: none; padding: 10px;">
-      <img src="assets/mode2.gif" width="200"><br>
-      <sub><i>Mode 2</i></sub>
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <img src="assets/mode1.gif" width="200" style="margin: 0 20px;">
+  <img src="assets/mode2.gif" width="200" style="margin: 0 20px;">
+  <br>
+  <span style="margin-right: 240px;"><i>Mode 1</i></span>
+  <span><i>Mode 2</i></span>
+</div>
 
 
 ## How to Play
