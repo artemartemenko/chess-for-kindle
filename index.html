@@ -1243,6 +1243,8 @@
                 
                 if (isGameInProgress) {
                     welcomeModal.style.display = 'flex';
+                    continueGameBtn.style.display = 'block';
+                    newGameBtn.textContent = 'New game';
                     
                     newGameBtn.onclick = function() {
                         welcomeModal.style.display = 'none';
