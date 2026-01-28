@@ -24,8 +24,8 @@ Just sit opposite each other and play.
 
 - **Made for E-Ink:** High contrast, no animations, no flicker.
 - **Lightweight:** Loads fast, drains almost no battery.
-- **Two humans, one device:** The board rotates automatically for face-to-face play, or use a double-tap on an empty square to keep your opponent’s pieces flipped.
 - **Game persistence:** The chess game can be resumed after closing the browser or reloading the page.
+- **Two humans, one device:** The board rotates automatically for face-to-face play, or use a double-tap on an empty square to keep your opponent’s pieces flipped.
 
 <p align="center">
     <img src="assets/mode1.gif" width="200">
