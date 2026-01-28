@@ -1226,62 +1226,67 @@
             var newGameBtn = document.getElementById('newGameBtn');
             var continueGameBtn = document.getElementById('continueGameBtn');
             
-            var savedRaw = localStorage.getItem('chessGameSave');
-            var isGameInProgress = false;
+            if (window.location.hash === '#game') {
+                var savedRaw = localStorage.getItem('chessGameSave');
+                var isGameInProgress = false;
 
-            if (savedRaw) {
-                try {
-                    var data = JSON.parse(savedRaw);
-                    if (data.historyIndex > 0) {
-                        isGameInProgress = true;
+                if (savedRaw) {
+                    try {
+                        var data = JSON.parse(savedRaw);
+                        if (data.historyIndex > 0) {
+                            isGameInProgress = true;
+                        }
+                    } catch(e) { 
+                        isGameInProgress = false; 
                     }
-                } catch(e) { 
-                    isGameInProgress = false; 
                 }
-            }
-            
-            if (isGameInProgress) {
-                welcomeModal.style.display = 'flex';
                 
-                newGameBtn.onclick = function() {
-                    welcomeModal.style.display = 'none';
+                if (isGameInProgress) {
+                    welcomeModal.style.display = 'flex';
+                    
+                    newGameBtn.onclick = function() {
+                        welcomeModal.style.display = 'none';
+                        startNewGame();
+                        hasAutoSaved = true;
+                    };
+                    
+                    continueGameBtn.onclick = function() {
+                        welcomeModal.style.display = 'none';
+                        initBoard();
+                        if (loadGame()) {
+                            hasAutoSaved = true;
+                            refreshEink();
+                            gameStartTime = Date.now();
+                            statsSent = false;
+                        } else {
+                            startNewGame();
+                        }
+                    };
+                } else {
                     startNewGame();
                     hasAutoSaved = true;
-                };
-                
-                continueGameBtn.onclick = function() {
-                    welcomeModal.style.display = 'none';
-                    initBoard();
-                    if (loadGame()) {
-                        hasAutoSaved = true;
-                        refreshEink();
-                        gameStartTime = Date.now();
-                        statsSent = false;
-                    } else {
-                        startNewGame();
-                    }
-                };
+                }
             } else {
-                startNewGame();
-                hasAutoSaved = true;
+                welcomeModal.style.display = 'flex';
+                continueGameBtn.style.display = 'none';
+                
+                newGameBtn.textContent = 'Start Game';
+                newGameBtn.onclick = function() {
+                    window.location.hash = '#game';
+                    window.location.reload();
+                };
             }
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                window.history.replaceState({chess: 'initial'}, '', window.location.href);
-                window.history.pushState({chess: 'current'}, '', window.location.href);
-                startGame();
-            });
-        } else {
-            window.history.replaceState({chess: 'initial'}, '', window.location.href);
-            window.history.pushState({chess: 'current'}, '', window.location.href);
-            startGame();
-        }
-
-        window.addEventListener('popstate', function(event) {
+        window.addEventListener('hashchange', function() {
             window.location.reload();
         });
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startGame);
+        } else {
+            startGame();
+        }
     </script>
 </body>
 </html>
