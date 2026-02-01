@@ -1,30 +1,23 @@
-const CACHE_NAME = 'chess-v20';
+const CACHE_NAME = 'chess-v19';
 
 function cacheUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
-var PRECACHE_URLS = [
-  './',
-  './index.html',
-  './chess/index.html',
-  './checkers/index.html',
-  './reversi/index.html',
-  './peg-solitaire/index.html',
-  './backgammon/index.html',
-  './css/games-common.css',
-  './js/games-common.js'
-];
-
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return Promise.all(
-        PRECACHE_URLS.map(function(url) {
-          return cache.add(cacheUrl(url)).catch(function() {});
-        })
-      );
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll([
+        './', './index.html',
+        './chess/', './chess/index.html',
+        './checkers/', './checkers/index.html',
+        './reversi/', './reversi/index.html',
+        './peg-solitaire/', './peg-solitaire/index.html',
+        './backgammon/', './backgammon/index.html',
+        './css/games-common.css',
+        './js/games-common.js'
+      ]))
+      .catch(function() {})
   );
   self.skipWaiting();
 });
@@ -46,8 +39,8 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const url = event.request.url;
-  
-  if (url.includes('google-analytics.com') || 
+
+  if (url.includes('google-analytics.com') ||
       url.includes('googletagmanager.com') ||
       url.includes('gtag')) {
     event.respondWith(fetch(event.request));
@@ -56,13 +49,11 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     fetch(event.request)
-      .then(function(response) {
-        if (response && response.status === 200 && response.type === 'basic') {
-          var cacheKey = new Request(response.url, { method: 'GET' });
-          var responseClone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(cacheKey, responseClone);
-          });
+      .then(async response => {
+        if (response.ok) {
+          const responseClone = response.clone();
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(event.request, responseClone);
         }
         return response;
       })
