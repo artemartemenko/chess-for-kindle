@@ -137,13 +137,30 @@ var _doubleTapLastTime = 0;
 function initDoubleTapFullscreen(containerSelector) {
     containerSelector = containerSelector || '.board-container';
     initFullscreen(refreshEink);
+    function elementAtEvent(e) {
+        var x, y;
+        if (e.touches && e.touches.length) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        } else if (e.changedTouches && e.changedTouches.length) {
+            x = e.changedTouches[0].clientX;
+            y = e.changedTouches[0].clientY;
+        } else {
+            x = e.clientX;
+            y = e.clientY;
+        }
+        return document.elementFromPoint(x, y);
+    }
+    function isInteractiveTarget(el) {
+        if (!el || !el.closest) return false;
+        return el.closest('.btn') || el.closest('.btn-nav') || el.closest('.promotion-modal') || el.closest('a');
+    }
     function handleTap(e) {
         var container = document.querySelector(containerSelector);
         if (!container) return;
-        var outside = !container.contains(e.target);
-        var isBtn = e.target.classList && (e.target.classList.contains('btn') || (e.target.closest && e.target.closest('.btn')));
-        var isModalOrLink = e.target.closest && (e.target.closest('.promotion-modal') || e.target.closest('a'));
-        if (!outside || isBtn || isModalOrLink) return;
+        var el = elementAtEvent(e);
+        var outside = !container.contains(el);
+        if (!outside || isInteractiveTarget(el)) return;
         var now = Date.now();
         if (now - _doubleTapLastTime < 500) {
             toggleFullscreenMode(refreshEink);
@@ -155,10 +172,9 @@ function initDoubleTapFullscreen(containerSelector) {
     document.addEventListener('touchstart', function(e) {
         var container = document.querySelector(containerSelector);
         if (!container) return;
-        var outside = !container.contains(e.target);
-        var isBtn = e.target.classList && (e.target.classList.contains('btn') || (e.target.closest && e.target.closest('.btn')));
-        var isModalOrLink = e.target.closest && (e.target.closest('.promotion-modal') || e.target.closest('a'));
-        if (outside && !isBtn && !isModalOrLink) {
+        var el = elementAtEvent(e);
+        var outside = !container.contains(el);
+        if (outside && !isInteractiveTarget(el)) {
             e.preventDefault();
             handleTap(e);
         }
