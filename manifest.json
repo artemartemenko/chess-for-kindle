@@ -1,7 +1,7 @@
 {
-  "name": "Book of Games for Kindle",
+  "name": "Book of Games",
   "short_name": "Book of Games",
-  "description": "Chess, Checkers, Reversi, Peg Solitaire, Backgammon — play offline",
+  "description": "Chess, Checkers, Reversi, Peg Solitaire — play offline",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
