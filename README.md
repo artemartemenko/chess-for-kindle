@@ -56,8 +56,3 @@ Should work on most Kindles and other devices with a browser and a touchscreen.
 - **iPad Pro** (7th Gen, M4, 13-inch)
 
 </details>
-
-
-## License
-
-MIT — free to use, modify, and share.
