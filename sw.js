@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chess-v18';
+const CACHE_NAME = 'chess-v19';
 
 self.addEventListener('install', event => {
   event.waitUntil(
