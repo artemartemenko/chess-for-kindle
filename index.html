@@ -89,6 +89,7 @@
             height: 56px;
             line-height: 54px;
             margin-bottom: 16px;
+            padding: 0;
             font-family: "Bookerly", "Caecilia", Georgia, serif;
             font-size: 18px;
             font-weight: bold;
@@ -100,6 +101,8 @@
             touch-action: manipulation;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .btn-game:hover,
         .btn-game:active {
@@ -116,11 +119,11 @@
             <span class="cover-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 592.5 326.1"><path d="M130.7 12v60.5l140 86.5zM65 56v43.5l157 50zM214 0v73.5l72.4 74.7z" fill="#2c2c2c"/><path d="M296.3 191.9 0 100l88 188.5h416.5l88-188.5zM296 305H95.6l9.9 21.1H487l9.9-21.1H296.5z" fill="#2c2c2c"/><path d="M461.8 72.5V12l-140 147zm65.7 27V56l-157 93.5zM378.5 0l-72.4 148.2 72.4-74.7z" fill="#2c2c2c"/></svg></span>
             <h1>Book of Games</h1>
                 <p class="contents-heading">Contents</p>
-                <a href="chess/" class="btn-game">Chess</a>
-                <a href="checkers/" class="btn-game">Checkers</a>
-                <a href="reversi/" class="btn-game">Reversi</a>
-                <a href="peg-solitaire/" class="btn-game">Peg Solitaire</a>
-                <!-- <a href="backgammon/" class="btn-game">Backgammon</a> -->
+                <button type="button" class="btn-game" data-href="chess/">Chess</button>
+                <button type="button" class="btn-game" data-href="checkers/">Checkers</button>
+                <button type="button" class="btn-game" data-href="reversi/">Reversi</button>
+                <button type="button" class="btn-game" data-href="peg-solitaire/">Peg Solitaire</button>
+                <!-- <button type="button" class="btn-game" data-href="backgammon/">Backgammon</button> -->
             </div>
         </div>
     </div>
@@ -137,13 +140,10 @@
         ['chess/', 'checkers/', 'reversi/', 'peg-solitaire/', 'backgammon/'].forEach(function(path) {
             fetch(path, { mode: 'same-origin' }).catch(function() {});
         });
-        document.querySelectorAll('a.btn-game').forEach(function(a) {
-            a.addEventListener('click', function(e) {
-                var href = this.getAttribute('href');
-                if (href && href.indexOf('http') !== 0) {
-                    e.preventDefault();
-                    window.location.href = href;
-                }
+        document.querySelectorAll('.btn-game[data-href]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var href = this.getAttribute('data-href');
+                if (href) window.location.href = href;
             });
         });
     </script>
