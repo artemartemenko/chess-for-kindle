@@ -1,23 +1,30 @@
-const CACHE_NAME = 'chess-v19';
+const CACHE_NAME = 'chess-v20';
 
 function cacheUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
+var PRECACHE_URLS = [
+  './',
+  './index.html',
+  './chess/index.html',
+  './checkers/index.html',
+  './reversi/index.html',
+  './peg-solitaire/index.html',
+  './backgammon/index.html',
+  './css/games-common.css',
+  './js/games-common.js'
+];
+
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll([
-        './', './index.html',
-        './chess/', './chess/index.html',
-        './checkers/', './checkers/index.html',
-        './reversi/', './reversi/index.html',
-        './peg-solitaire/', './peg-solitaire/index.html',
-        './backgammon/', './backgammon/index.html',
-        './css/games-common.css',
-        './js/games-common.js'
-      ]))
-      .catch(function() {})
+    caches.open(CACHE_NAME).then(function(cache) {
+      return Promise.all(
+        PRECACHE_URLS.map(function(url) {
+          return cache.add(cacheUrl(url)).catch(function() {});
+        })
+      );
+    })
   );
   self.skipWaiting();
 });
