@@ -137,6 +137,15 @@
         ['chess/', 'checkers/', 'reversi/', 'peg-solitaire/', 'backgammon/'].forEach(function(path) {
             fetch(path, { mode: 'same-origin' }).catch(function() {});
         });
+        document.querySelectorAll('a.btn-game').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                var href = this.getAttribute('href');
+                if (href && href.indexOf('http') !== 0) {
+                    e.preventDefault();
+                    window.location.href = href;
+                }
+            });
+        });
     </script>
 </body>
 </html>
