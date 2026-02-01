@@ -1,4 +1,8 @@
-const CACHE_NAME = 'chess-v18';
+const CACHE_NAME = 'chess-v19';
+
+function cacheUrl(path) {
+  return new URL(path, self.registration.scope).href;
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -13,7 +17,9 @@ self.addEventListener('install', event => {
         './css/games-common.css',
         './js/games-common.js'
       ]))
+      .catch(function() {})
   );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
@@ -55,15 +61,15 @@ self.addEventListener('fetch', event => {
           var path = pathname.replace(/\/$/, '');
           var isRoot = (pathname === '' || pathname === '/') || (pathname.slice(-1) === '/' && !/\/chess$/.test(path) && !/\/checkers$/.test(path) && !/\/reversi$/.test(path) && !/\/peg-solitaire$/.test(path) && !/\/backgammon$/.test(path));
           if (isRoot) {
-            return caches.match('./index.html').then(function(r) {
-              return r || caches.match('index.html') || caches.match(event.request);
+            return caches.match(cacheUrl('./index.html')).then(function(r) {
+              return r || caches.match(cacheUrl('index.html')) || caches.match(event.request);
             });
           }
-          if (/\/chess$/.test(path) || /\/chess\//.test(event.request.url)) return caches.match('./chess/index.html');
-          if (/\/checkers$/.test(path) || /\/checkers\//.test(event.request.url)) return caches.match('./checkers/index.html');
-          if (/\/reversi$/.test(path) || /\/reversi\//.test(event.request.url)) return caches.match('./reversi/index.html');
-          if (/\/peg-solitaire$/.test(path) || /\/peg-solitaire\//.test(event.request.url)) return caches.match('./peg-solitaire/index.html');
-          if (/\/backgammon$/.test(path) || /\/backgammon\//.test(event.request.url)) return caches.match('./backgammon/index.html');
+          if (/\/chess$/.test(path) || /\/chess\//.test(event.request.url)) return caches.match(cacheUrl('./chess/index.html'));
+          if (/\/checkers$/.test(path) || /\/checkers\//.test(event.request.url)) return caches.match(cacheUrl('./checkers/index.html'));
+          if (/\/reversi$/.test(path) || /\/reversi\//.test(event.request.url)) return caches.match(cacheUrl('./reversi/index.html'));
+          if (/\/peg-solitaire$/.test(path) || /\/peg-solitaire\//.test(event.request.url)) return caches.match(cacheUrl('./peg-solitaire/index.html'));
+          if (/\/backgammon$/.test(path) || /\/backgammon\//.test(event.request.url)) return caches.match(cacheUrl('./backgammon/index.html'));
         }
         return caches.match(event.request);
       })
