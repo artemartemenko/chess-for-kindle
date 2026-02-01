@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>Checkers for Kindle</title>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QWVNRDSRLJ');
+        </script>
+        
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="../css/games-common.css">
+        <style>
+            .piece svg { width: 98%; height: 98%; }
+            .board.size-8 .square { width: 12.5%; height: 12.5%; }
+            .board.size-8 .square.rank1 { top: 87.5%; } .board.size-8 .square.rank2 { top: 75%; } .board.size-8 .square.rank3 { top: 62.5%; } .board.size-8 .square.rank4 { top: 50%; }
+            .board.size-8 .square.rank5 { top: 37.5%; } .board.size-8 .square.rank6 { top: 25%; } .board.size-8 .square.rank7 { top: 12.5%; } .board.size-8 .square.rank8 { top: 0%; }
+            .board.size-8 .square.file1 { left: 0%; } .board.size-8 .square.file2 { left: 12.5%; } .board.size-8 .square.file3 { left: 25%; } .board.size-8 .square.file4 { left: 37.5%; }
+            .board.size-8 .square.file5 { left: 50%; } .board.size-8 .square.file6 { left: 62.5%; } .board.size-8 .square.file7 { left: 75%; } .board.size-8 .square.file8 { left: 87.5%; }
+            .board.size-10 .square { width: 10%; height: 10%; }
+            .board.size-10 .square.rank1 { top: 90%; } .board.size-10 .square.rank2 { top: 80%; } .board.size-10 .square.rank3 { top: 70%; } .board.size-10 .square.rank4 { top: 60%; } .board.size-10 .square.rank5 { top: 50%; }
+            .board.size-10 .square.rank6 { top: 40%; } .board.size-10 .square.rank7 { top: 30%; } .board.size-10 .square.rank8 { top: 20%; } .board.size-10 .square.rank9 { top: 10%; } .board.size-10 .square.rank10 { top: 0%; }
+            .board.size-10 .square.file1 { left: 0%; } .board.size-10 .square.file2 { left: 10%; } .board.size-10 .square.file3 { left: 20%; } .board.size-10 .square.file4 { left: 30%; } .board.size-10 .square.file5 { left: 40%; }
+            .board.size-10 .square.file6 { left: 50%; } .board.size-10 .square.file7 { left: 60%; } .board.size-10 .square.file8 { left: 70%; } .board.size-10 .square.file9 { left: 80%; } .board.size-10 .square.file10 { left: 90%; }
+        </style>
+    </head>
+    
+    <body>
+        <div id="eink-refresh-overlay"></div>
+        <div class="container">
+            <div id="welcomeModal" class="promotion-modal">
+                <div class="promotion-content title-page">
+                    <div class="welcome-back-wrap">
+                        <a href="../" class="welcome-back-link" title="Contents"></a>
+                    </div>
+                    <div class="welcome-variants-info-wrap">
+                        <button type="button" id="variantsInfoBtn" class="welcome-variants-info-btn" title="About variants"></button>
+                    </div>
+                    <div class="promotion-content-inner">
+                        <p class="chapter-label">Chapter 2</p>
+                        <h1 class="promotion-title">Checkers</h1>
+                        <div class="welcome-buttons-wrap">
+                            <div class="welcome-continue-wrap title-page-continue">
+                                <button id="continueGameBtn" class="btn">Continue</button>
+                            </div>
+                            <div class="title-page-actions">
+                                <button id="modeEnglishBtn" class="btn" style="margin-bottom: 10px;">English (8×8)</button>
+                                <button id="modePoolBtn" class="btn" style="margin-bottom: 10px;">Pool (8×8)</button>
+                                <button id="modeBrazilianBtn" class="btn" style="margin-bottom: 10px;">Brazilian (8×8)</button>
+                                <button id="modeInternationalBtn" class="btn" style="margin-bottom: 10px;">International (10×10)</button>
+                                <button id="modeCanadianBtn" class="btn">Canadian (12×12)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="variantsInfoModal" class="promotion-modal" aria-hidden="true">
+                <div class="variants-info-content">
+                    <div class="variants-info-title">Checkers variants</div>
+                    <div class="variant-item"><strong>English</strong> (8×8)<br><span>Black moves first. Kings move 1 square. Simple pieces jump forward only. Max capture not required.</span></div>
+                    <div class="variant-item"><strong>Pool</strong> (8×8)<br><span>Black moves first. Flying kings. Simple pieces jump backward. Max capture required.</span></div>
+                    <div class="variant-item"><strong>Brazilian</strong> (8×8)<br><span>White moves first. Flying kings. Simple pieces jump backward. Max capture required.</span></div>
+                    <div class="variant-item"><strong>International</strong> (10×10)<br><span>White moves first. Flying kings. Simple pieces jump backward in series. Max capture required.</span></div>
+                    <div class="variant-item"><strong>Canadian</strong> (12×12)<br><span>White moves first. Flying kings. Simple pieces jump backward in series. Max capture required.</span></div>
+                    
+                    <button type="button" id="variantsInfoClose" class="variants-info-close">Close</button>
+                </div>
+            </div>
+
+            <div id="welcomeFooter" style="display: block;">
+                <span>Edition 1.0</span>
+            </div>
+    
+            <div class="game-area">
+                <div class="main-column">
+                    <div class="info">
+                        <button id="backBtn" class="btn btn-nav btn-nav-back" type="button"></button>
+                        <div class="captured-inline" id="capturedTopB"></div>
+                        <div class="info-center">
+                            <div class="status" id="status">White to move</div>
+                            <div class="score" id="scoreTop"></div>
+                        </div>
+                        <div class="captured-inline" id="capturedTopW"></div>
+                        <button id="forwardBtn" class="btn btn-nav btn-nav-forward" type="button"></button>
+                    </div>
+                    <div class="board-container">
+                        <div class="board size-8" id="board"></div>
+                    </div>
+                    <div class="info-bottom">
+                        <button id="backBtnBottom" class="btn btn-nav btn-nav-back" type="button"></button>
+                        <div class="captured-inline" id="capturedBottomW"></div>
+                        <div class="info-center">
+                            <div class="status-bottom" id="statusBottom">White to move</div>
+                            <div class="score" id="scoreBottom"></div>
+                        </div>
+                        <div class="captured-inline" id="capturedBottomB"></div>
+                        <button id="forwardBtnBottom" class="btn btn-nav btn-nav-forward" type="button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="../js/games-common.js"></script>
+    <script>
+        var gameMode = loadJSON('checkersGameMode') || 'english';
+        var BOARD_SIZE = gameMode === 'international' ? 10 : (gameMode === 'canadian' ? 12 : 8);
+        var PIECE_ROWS = gameMode === 'international' ? 4 : (gameMode === 'canadian' ? 5 : 3);
+
+        function isDark(row, col) {
+            return (row + col) % 2 === 1;
+        }
+
+        function isFlyingRules() {
+            return gameMode === 'international' || gameMode === 'pool' || gameMode === 'brazilian' || gameMode === 'canadian';
+        }
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            BOARD_SIZE = gameMode === 'international' ? 10 : (gameMode === 'canadian' ? 12 : 8);
+            PIECE_ROWS = gameMode === 'international' ? 4 : (gameMode === 'canadian' ? 5 : 3);
+            saveJSON('checkersGameMode', gameMode);
+        }
+
+        function startNewGame() {
+            setGameMode(gameMode);
+            board = [];
+            var pieceStart = BOARD_SIZE - PIECE_ROWS;
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                board[r] = [];
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    if (!isDark(r, c)) {
+                        board[r][c] = '';
+                        continue;
+                    }
+                    if (r >= pieceStart) board[r][c] = 'wm';
+                    else if (r < PIECE_ROWS) board[r][c] = 'bm';
+                    else board[r][c] = '';
+                }
+            }
+            currentTurn = (gameMode === 'english' || gameMode === 'pool') ? 'b' : 'w';
+            gameHistory = [];
+            historyIndex = -1;
+            capturedPieces = {w: [], b: []};
+            lastMove = null;
+            isGameOver = false;
+            statsSent = false;
+            gameStartTime = Date.now();
+
+            clearSavedGame();
+            initBoard();
+            saveState();
+            renderBoard();
+            refreshEink();
+            
+            if (typeof gtag === 'function') gtag('event', 'game_start', { 'method': 'manual' });
+        }
+
+        var pieceSymbols = {};
+        (function initPieceSymbols() {
+            var manSvg = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#454242" stroke="#fff" stroke-width="2"/></svg>';
+            var kingSvg = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#454242" stroke="#fff" stroke-width="2"/><circle cx="50" cy="50" r="24" fill="none" stroke="#fff" stroke-width="2"/></svg>';
+            var types = [
+                { id: 'm', svg: manSvg },
+                { id: 'k', svg: kingSvg }
+            ];
+            for (var i = 0; i < types.length; i++) {
+                var t = types[i];
+                var wSvg = t.svg.replace(/fill="#454242"/g, 'fill="' + PIECE_WHITE_FILL + '"').replace(/stroke="#fff"/g, 'stroke="' + PIECE_WHITE_STROKE + '"');
+                var bSvg = t.svg.replace(/fill="#454242"/g, 'fill="' + PIECE_BLACK_FILL + '"').replace(/stroke="#fff"/g, 'stroke="' + PIECE_BLACK_STROKE + '"');
+                pieceSymbols['w' + t.id] = wSvg;
+                pieceSymbols['b' + t.id] = bSvg;
+            }
+        })();
+
+        var board;
+        var currentTurn = 'w';
+        var selectedSquare = null;
+        var gameHistory = [];
+        var historyIndex = -1;
+        var capturedPieces = {w: [], b: []};
+        var lastMove = null;
+        var isGameOver = false;
+        var hasAutoSaved = false;
+
+        var boardElement = document.getElementById('board');
+        var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
+        var scoreElements = [document.getElementById('scoreTop'), document.getElementById('scoreBottom')];
+        var squareElements = [];
+
+        function getSaveKey() {
+            return 'checkersGameSave_' + gameMode;
+        }
+
+        function saveGame() {
+            var gameData = {
+                gameMode: gameMode,
+                board: board,
+                currentTurn: currentTurn,
+                capturedPieces: capturedPieces,
+                lastMove: lastMove,
+                gameHistory: gameHistory,
+                historyIndex: historyIndex,
+                isGameOver: isGameOver,
+                timestamp: new Date().toISOString()
+            };
+            saveJSON(getSaveKey(), gameData);
+            saveJSON('checkersLastMode', gameMode);
+        }
+
+        function loadGame() {
+            var data = loadJSON(getSaveKey());
+            if (!data) return false;
+            if (data.gameMode) setGameMode(data.gameMode);
+            board = data.board;
+            currentTurn = data.currentTurn;
+            capturedPieces = data.capturedPieces;
+            lastMove = data.lastMove;
+            gameHistory = data.gameHistory;
+            historyIndex = data.historyIndex;
+            isGameOver = data.isGameOver;
+            renderBoard();
+            return true;
+        }
+
+        function clearSavedGame() {
+            clearSaved(getSaveKey());
+        }
+
+        function getBoardHash(b, turn) {
+            var s = "";
+            for (var i = 0; i < BOARD_SIZE; i++) s += b[i].join(",") + "/";
+            s += "|" + turn;
+            return s;
+        }
+
+        function initBoard() {
+            setGameMode(gameMode);
+            boardElement.innerHTML = '';
+            squareElements = [];
+            boardElement.classList.remove('size-8', 'size-10', 'size-12');
+            boardElement.classList.add('size-' + BOARD_SIZE);
+            var pct = 100 / BOARD_SIZE;
+
+            for (var row = 0; row < BOARD_SIZE; row++) {
+                for (var col = 0; col < BOARD_SIZE; col++) {
+                    var square = document.createElement('div');
+                    square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+                    square.style.position = 'absolute';
+                    square.style.boxSizing = 'border-box';
+                    square.style.width = pct + '%';
+                    square.style.height = pct + '%';
+                    square.style.top = (row * pct) + '%';
+                    square.style.left = (col * pct) + '%';
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    bindCell(square, handleSquareClick);
+
+                    var pieceContainer = document.createElement('div');
+                    pieceContainer.className = 'piece';
+                    square.appendChild(pieceContainer);
+
+                    boardElement.appendChild(square);
+                    squareElements.push(square);
+                }
+            }
+        }
+
+        function renderBoard() {
+            var sizeClass = 'size-' + BOARD_SIZE;
+            boardElement.className = 'board ' + sizeClass;
+
+            for (var row = 0; row < BOARD_SIZE; row++) {
+                for (var col = 0; col < BOARD_SIZE; col++) {
+                    var idx = row * BOARD_SIZE + col;
+                    var sqEl = squareElements[idx];
+                    var pieceCont = sqEl.querySelector('.piece');
+                    var piece = board[row][col];
+                    
+                    sqEl.classList.remove('selected', 'possible-move', 'possible-capture', 'last-move');
+
+                    if (lastMove) {
+                        if ((lastMove.from.row === row && lastMove.from.col === col) || 
+                            (lastMove.to.row === row && lastMove.to.col === col)) {
+                            sqEl.classList.add('last-move');
+                        }
+                    }
+
+                    var newContent = piece ? pieceSymbols[piece] : '';
+                    if (pieceCont.getAttribute('data-piece') !== (piece || 'empty')) {
+                        pieceCont.innerHTML = newContent;
+                        pieceCont.setAttribute('data-piece', piece || 'empty');
+                    }
+                }
+            }
+
+            updateCapturedPieces();
+            updateStatus();
+            updateButtons();
+        }
+
+        function handleSquareClick(e) {
+            if (isGameOver) return;
+
+            var row = +e.currentTarget.dataset.row;
+            var col = +e.currentTarget.dataset.col;
+
+            if (selectedSquare) {
+                var moves = getPossibleMoves(selectedSquare.row, selectedSquare.col);
+                var valid = false;
+                var moveObj = null;
+                for (var i = 0; i < moves.length; i++) {
+                    if (moves[i].row === row && moves[i].col === col) {
+                        valid = true;
+                        moveObj = moves[i];
+                        break;
+                    }
+                }
+                
+                if (valid) {
+                    makeMove(selectedSquare.row, selectedSquare.col, row, col, moveObj.captures || []);
+                    clearSelection();
+                } else if (board[row][col] && board[row][col][0] === currentTurn) {
+                    selectSquare(row, col);
+                } else {
+                    clearSelection();
+                }
+            } else {
+                if (board[row][col] && board[row][col][0] === currentTurn) {
+                    selectSquare(row, col);
+                }
+            }
+        }
+
+        function selectSquare(row, col) {
+            selectedSquare = {row: row, col: col};
+            renderBoard();
+            
+            squareElements[row * BOARD_SIZE + col].classList.add('selected');
+
+            var moves = getPossibleMoves(row, col);
+            for (var i = 0; i < moves.length; i++) {
+                var m = moves[i];
+                var sq = squareElements[m.row * BOARD_SIZE + m.col];
+                sq.classList.add(m.captures && m.captures.length ? 'possible-capture' : 'possible-move');
+            }
+        }
+
+        function clearSelection() {
+            selectedSquare = null;
+            renderBoard();
+        }
+
+        var DIAG = [[-1,-1],[-1,1],[1,-1],[1,1]];
+
+        function getCaptureSequences(b, row, col, piece, fromCaptures) {
+            fromCaptures = fromCaptures || [];
+            var color = piece[0];
+            var isKing = piece[1] === 'k';
+            var fwd = color === 'w' ? -1 : 1;
+            var manDirs = isFlyingRules() ? DIAG : [[fwd, -1], [fwd, 1]];
+            var dirs = isKing ? DIAG : manDirs;
+            var kingFlies = isFlyingRules() && isKing;
+            var sequences = [];
+            var N = b.length;
+
+            for (var d = 0; d < dirs.length; d++) {
+                var dr = dirs[d][0], dc = dirs[d][1];
+                var step = 1;
+                while (true) {
+                    var jr = row + dr * step;
+                    var jc = col + dc * step;
+                    if (jr < 0 || jr >= N || jc < 0 || jc >= N || !isDark(jr, jc)) break;
+                    var mid = b[jr][jc];
+                    if (!mid) {
+                        if (!kingFlies) break;
+                        step++;
+                        continue;
+                    }
+                    if (mid[0] === color) break;
+                    var landR = jr + dr;
+                    var landC = jc + dc;
+                    if (landR < 0 || landR >= N || landC < 0 || landC >= N || !isDark(landR, landC)) break;
+                    if (b[landR][landC]) break;
+                    var already = false;
+                    for (var z = 0; z < fromCaptures.length; z++) {
+                        if (fromCaptures[z].row === jr && fromCaptures[z].col === jc) { already = true; break; }
+                    }
+                    if (already) {
+                        if (!kingFlies) break;
+                        step++;
+                        continue;
+                    }
+                    var newCaptures = fromCaptures.slice();
+                    newCaptures.push({row: jr, col: jc, piece: mid});
+                    b[jr][jc] = '';
+                    var sub = getCaptureSequences(b, landR, landC, piece, newCaptures);
+                    b[jr][jc] = mid;
+                    if (sub.length) {
+                        for (var s = 0; s < sub.length; s++) sequences.push(sub[s]);
+                    } else {
+                        sequences.push({row: landR, col: landC, captures: newCaptures});
+                    }
+                    if (!kingFlies) break;
+                    step++;
+                }
+            }
+            return sequences;
+        }
+
+        function anyCaptureForColor(b, color) {
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    if (!isDark(r, c)) continue;
+                    var p = b[r][c];
+                    if (p && p[0] === color && getCaptureSequences(b, r, c, p).length > 0) return true;
+                }
+            }
+            return false;
+        }
+
+        function getMaxCaptureCount(color) {
+            var maxCount = 0;
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    if (!isDark(r, c)) continue;
+                    var p = board[r][c];
+                    if (!p || p[0] !== color) continue;
+                    var seqs = getCaptureSequences(board, r, c, p);
+                    for (var i = 0; i < seqs.length; i++) {
+                        var cnt = seqs[i].captures ? seqs[i].captures.length : 0;
+                        if (cnt > maxCount) maxCount = cnt;
+                    }
+                }
+            }
+            return maxCount;
+        }
+
+        function getSimpleMoves(b, row, col, piece) {
+            var color = piece[0];
+            var isKing = piece[1] === 'k';
+            var moves = [];
+            var fwd = color === 'w' ? -1 : 1;
+            var dirs = isKing ? DIAG : [[fwd, -1], [fwd, 1]];
+            var maxStep = (isFlyingRules() && isKing) ? BOARD_SIZE - 1 : 1;
+            var N = b.length;
+
+            for (var d = 0; d < dirs.length; d++) {
+                var dr = dirs[d][0], dc = dirs[d][1];
+                for (var step = 1; step <= maxStep; step++) {
+                    var nr = row + dr * step;
+                    var nc = col + dc * step;
+                    if (nr < 0 || nr >= N || nc < 0 || nc >= N || !isDark(nr, nc)) break;
+                    if (b[nr][nc]) break;
+                    moves.push({row: nr, col: nc, captures: []});
+                }
+            }
+            return moves;
+        }
+
+        function getPossibleMoves(row, col) {
+            var piece = board[row][col];
+            if (!piece || piece[0] !== currentTurn) return [];
+
+            var captures = getCaptureSequences(board, row, col, piece);
+            if (captures.length) {
+                if (isFlyingRules()) {
+                    var maxCount = getMaxCaptureCount(currentTurn);
+                    var out = [];
+                    for (var i = 0; i < captures.length; i++) {
+                        var cnt = captures[i].captures ? captures[i].captures.length : 0;
+                        if (cnt === maxCount) out.push(captures[i]);
+                    }
+                    return out;
+                }
+                return captures;
+            }
+            if (anyCaptureForColor(board, currentTurn)) return [];
+
+            return getSimpleMoves(board, row, col, piece);
+        }
+
+        function makeMove(fr, fc, tr, tc, capturesList) {
+            var piece = board[fr][fc];
+            capturesList = capturesList || [];
+
+            for (var i = 0; i < capturesList.length; i++) {
+                var cap = capturesList[i];
+                var cp = board[cap.row][cap.col];
+                if (cp) {
+                    capturedPieces[cp[0]].push(cp);
+                    board[cap.row][cap.col] = '';
+                }
+            }
+            
+            board[tr][tc] = piece;
+            board[fr][fc] = '';
+
+            if (piece[1] === 'm' && (piece[0] === 'w' && tr === 0 || piece[0] === 'b' && tr === BOARD_SIZE - 1)) {
+                board[tr][tc] = piece[0] + 'k';
+            }
+
+            lastMove = {from: {row: fr, col: fc}, to: {row: tr, col: tc}};
+            currentTurn = currentTurn === 'w' ? 'b' : 'w';
+            
+            saveState();
+            renderBoard();
+        }
+
+        function cloneBoard(src) {
+            var dst = [];
+            for (var i = 0; i < BOARD_SIZE; i++) dst[i] = src[i].slice();
+            return dst;
+        }
+
+        function saveState() {
+            gameHistory = gameHistory.slice(0, historyIndex + 1);
+            var stateHash = getBoardHash(board, currentTurn);
+            
+            gameHistory.push({
+                board: cloneBoard(board),
+                currentTurn: currentTurn,
+                capturedPieces: {w: capturedPieces.w.slice(), b: capturedPieces.b.slice()},
+                lastMove: lastMove ? JSON.parse(JSON.stringify(lastMove)) : null,
+                hash: stateHash
+            });
+            historyIndex++;
+            if (hasAutoSaved) saveGame();
+        }
+
+        function restoreState(idx) {
+            if (idx < 0 || idx >= gameHistory.length) return;
+            
+            var s = gameHistory[idx];
+            board = cloneBoard(s.board);
+            currentTurn = s.currentTurn;
+            capturedPieces = {w: s.capturedPieces.w.slice(), b: s.capturedPieces.b.slice()};
+            lastMove = s.lastMove ? {from: {row: s.lastMove.from.row, col: s.lastMove.from.col}, to: {row: s.lastMove.to.row, col: s.lastMove.to.col}} : null;
+            historyIndex = idx;
+            isGameOver = false;
+            clearSelection();
+        }
+
+        function updateCapturedPieces() {
+            var wCount = 0, bCount = 0;
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    var p = board[r][c];
+                    if (p) { if (p[0] === 'w') wCount++; else bCount++; }
+                }
+            }
+            var wCap = capturedPieces.w.length;
+            var bCap = capturedPieces.b.length;
+            var wAdv = bCap - wCap;
+            if (wAdv > 0) {
+                if (scoreElements[0]) scoreElements[0].textContent = '';
+                if (scoreElements[1]) scoreElements[1].textContent = '+' + wAdv;
+            } else if (wAdv < 0) {
+                if (scoreElements[0]) scoreElements[0].textContent = '+' + (-wAdv);
+                if (scoreElements[1]) scoreElements[1].textContent = '';
+            } else {
+                if (scoreElements[0]) scoreElements[0].textContent = '';
+                if (scoreElements[1]) scoreElements[1].textContent = '';
+            }
+
+            function render(contId, pieces, trophyColor) {
+                var cont = document.getElementById(contId);
+                if (!cont) return;
+                var men = 0, kings = 0;
+                for (var i = 0; i < pieces.length; i++) {
+                    if (pieces[i][0] === trophyColor) {
+                        if (pieces[i][1] === 'm') men++; else kings++;
+                    }
+                }
+                var html = '';
+                if (men > 0) html += '<div class="captured-row"><span class="captured-count">' + men + '</span><span class="captured-symbol">' + pieceSymbols[trophyColor + 'm'] + '</span></div>';
+                if (kings > 0) html += '<div class="captured-row"><span class="captured-count">' + kings + '</span><span class="captured-symbol">' + pieceSymbols[trophyColor + 'k'] + '</span></div>';
+                cont.innerHTML = html;
+            }
+
+            render('capturedBottomW', capturedPieces.b, 'b');
+            render('capturedBottomB', capturedPieces.w, 'w');
+            render('capturedTopB', capturedPieces.w, 'w');
+            render('capturedTopW', capturedPieces.b, 'b');
+        }
+
+        function updateStatus() {
+            var statusTop = '';
+            var statusBottom = '';
+            isGameOver = false;
+            
+            var wHasMove = hasLegalMoves('w');
+            var bHasMove = hasLegalMoves('b');
+            var wCount = 0, bCount = 0;
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    var p = board[r][c];
+                    if (p) { if (p[0] === 'w') wCount++; else bCount++; }
+                }
+            }
+
+            if (wCount === 0) {
+                statusTop = statusBottom = 'Black wins!';
+                isGameOver = true;
+            } else if (bCount === 0) {
+                statusTop = statusBottom = 'White wins!';
+                isGameOver = true;
+            } else if (!wHasMove && currentTurn === 'w') {
+                statusTop = statusBottom = 'Black wins! (No moves)';
+                isGameOver = true;
+            } else if (!bHasMove && currentTurn === 'b') {
+                statusTop = statusBottom = 'White wins! (No moves)';
+                isGameOver = true;
+            } else {
+                if (currentTurn === 'w') {
+                    statusBottom = 'Your move';
+                    statusTop = 'White to move';
+                } else {
+                    statusTop = 'Your move';
+                    statusBottom = 'Black to move';
+                }
+            }
+            
+            if (statusElements[0]) statusElements[0].textContent = statusTop;
+            if (statusElements[1]) statusElements[1].textContent = statusBottom;
+
+            if (isGameOver && !statsSent && gameStartTime) {
+                var gameEndTime = Date.now();
+                var durationSeconds = Math.round((gameEndTime - gameStartTime) / 1000);
+                if (typeof gtag === 'function') gtag('event', 'game_finish', { 'duration': durationSeconds, 'result': statusTop, 'moves': gameHistory.length });
+                statsSent = true;
+            }
+        }
+
+        function hasLegalMoves(color) {
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    if (!isDark(r, c)) continue;
+                    var p = board[r][c];
+                    if (p && p[0] === color && getPossibleMoves(r, c).length > 0) return true;
+                }
+            }
+            return false;
+        }
+
+        function updateButtons() {
+            updateHistoryButtons(['backBtn', 'backBtnBottom'], ['forwardBtn', 'forwardBtnBottom'], historyIndex, gameHistory.length, { isGameOver: isGameOver });
+        }
+        bindHistoryBack(['backBtn', 'backBtnBottom'], function() { if (historyIndex > 0) restoreState(historyIndex - 1); });
+        bindHistoryForward(['forwardBtn', 'forwardBtnBottom'], function() {
+            if (this.classList.contains('btn-new')) startNewGame();
+            else if (historyIndex < gameHistory.length - 1) restoreState(historyIndex + 1);
+        });
+
+        function hasSaveForMode(mode) {
+            var data = loadJSON('checkersGameSave_' + mode);
+            return data && data.gameHistory && data.gameHistory.length > 1;
+        }
+
+        function hasAnySave() {
+            return hasSaveForMode('english') || hasSaveForMode('international') || hasSaveForMode('pool') || hasSaveForMode('brazilian') || hasSaveForMode('canadian');
+        }
+
+        function getFirstAvailableSaveMode() {
+            if (hasSaveForMode('english')) return 'english';
+            if (hasSaveForMode('international')) return 'international';
+            if (hasSaveForMode('pool')) return 'pool';
+            if (hasSaveForMode('brazilian')) return 'brazilian';
+            if (hasSaveForMode('canadian')) return 'canadian';
+            return 'english';
+        }
+
+        function startGame() {
+            initBackToWelcome('welcomeModal', 'welcomeFooter');
+            runWelcomeFlow({
+                modalId: 'welcomeModal',
+                footerId: 'welcomeFooter',
+                hasSave: hasAnySave,
+                continueBtnId: 'continueGameBtn',
+                onContinue: function() {
+                    pushStatePlaying();
+                    hideWelcome('welcomeModal', 'welcomeFooter');
+                    var lastMode = loadJSON('checkersLastMode');
+                    if (!lastMode || !hasSaveForMode(lastMode)) lastMode = getFirstAvailableSaveMode();
+                    setGameMode(lastMode);
+                    initBoard();
+                    if (loadGame()) { hasAutoSaved = true; refreshEink(); gameStartTime = Date.now(); statsSent = false; }
+                    else { startNewGame(); hasAutoSaved = true; }
+                },
+                newButtons: [
+                    { id: 'modeEnglishBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('english'); startNewGame(); hasAutoSaved = true; } },
+                    { id: 'modeInternationalBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('international'); startNewGame(); hasAutoSaved = true; } },
+                    { id: 'modePoolBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('pool'); startNewGame(); hasAutoSaved = true; } },
+                    { id: 'modeBrazilianBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('brazilian'); startNewGame(); hasAutoSaved = true; } },
+                    { id: 'modeCanadianBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('canadian'); startNewGame(); hasAutoSaved = true; } }
+                ],
+                infoModal: { modalId: 'variantsInfoModal', openBtnId: 'variantsInfoBtn', closeBtnId: 'variantsInfoClose' }
+            });
+        }
+
+        initDoubleTapFullscreen('.board-container');
+        runOnReady(startGame);
+    </script>
+    <script>registerServiceWorker();</script>
+</body>
+</html>

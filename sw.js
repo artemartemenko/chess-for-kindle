@@ -1,9 +1,17 @@
-const CACHE_NAME = 'chess-v11';
+const CACHE_NAME = 'chess-v17';
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(['./', './index.html']))
+      .then(cache => cache.addAll([
+        './', './index.html',
+        './chess/', './chess/index.html',
+        './checkers/', './checkers/index.html',
+        './reversi/', './reversi/index.html',
+        './peg-solitaire/', './peg-solitaire/index.html',
+        './backgammon/', './backgammon/index.html',
+        './css/games-common.css'
+      ]))
   );
 });
 
@@ -40,7 +48,22 @@ self.addEventListener('fetch', event => {
           .then(cache => cache.put(event.request, responseClone));
         return response;
       })
-      .catch(() => {
+      .catch(function() {
+        if (event.request.mode === 'navigate') {
+          var pathname = new URL(event.request.url).pathname;
+          var path = pathname.replace(/\/$/, '');
+          var isRoot = (pathname === '' || pathname === '/') || (pathname.slice(-1) === '/' && !/\/chess$/.test(path) && !/\/checkers$/.test(path) && !/\/reversi$/.test(path) && !/\/peg-solitaire$/.test(path) && !/\/backgammon$/.test(path));
+          if (isRoot) {
+            return caches.match('./index.html').then(function(r) {
+              return r || caches.match('index.html') || caches.match(event.request);
+            });
+          }
+          if (/\/chess$/.test(path) || /\/chess\//.test(event.request.url)) return caches.match('./chess/index.html');
+          if (/\/checkers$/.test(path) || /\/checkers\//.test(event.request.url)) return caches.match('./checkers/index.html');
+          if (/\/reversi$/.test(path) || /\/reversi\//.test(event.request.url)) return caches.match('./reversi/index.html');
+          if (/\/peg-solitaire$/.test(path) || /\/peg-solitaire\//.test(event.request.url)) return caches.match('./peg-solitaire/index.html');
+          if (/\/backgammon$/.test(path) || /\/backgammon\//.test(event.request.url)) return caches.match('./backgammon/index.html');
+        }
         return caches.match(event.request);
       })
   );

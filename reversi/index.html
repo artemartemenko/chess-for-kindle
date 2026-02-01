@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Reversi for Kindle</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/games-common.css">
+    <style>
+        .board { background: #5a7a5a; }
+        .square {
+            background-color: #5a7a5a;
+            box-sizing: border-box;
+            border-right: 1px solid #4a6a4a;
+            border-bottom: 1px solid #4a6a4a;
+        }
+        .square.file1 { border-left: 1px solid #4a6a4a; }
+        .square.rank8 { border-top: 1px solid #4a6a4a; }
+        .square.last-move { background-color: #5a7a5a !important; border: 2px solid #2c2c2c !important; }
+        .board.black-turn .square.possible-move::after {
+            content: '';
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            top: 37.5%;
+            left: 37.5%;
+            background-color: #2c2c2c;
+            border: 1px solid #faf7f2;
+            border-radius: 50%;
+            box-sizing: border-box;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        .board.white-turn .square.possible-move::after {
+            content: '';
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            top: 37.5%;
+            left: 37.5%;
+            background-color: #faf7f2;
+            border: 1px solid #2c2c2c;
+            border-radius: 50%;
+            box-sizing: border-box;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        .piece svg { width: 90%; height: 90%; }
+    </style>
+</head>
+<body>
+    <div id="eink-refresh-overlay"></div>
+    <div class="container">
+        <div id="welcomeModal" class="promotion-modal">
+            <div class="promotion-content title-page">
+                <div class="welcome-back-wrap">
+                    <a href="../" class="welcome-back-link" title="Contents"></a>
+                </div>
+                <div class="welcome-variants-info-wrap">
+                    <button type="button" id="gameInfoBtn" class="welcome-variants-info-btn" title="Rules"></button>
+                </div>
+                <div class="promotion-content-inner">
+                    <p class="chapter-label">Chapter 3</p>
+                    <h1 class="promotion-title">Reversi</h1>
+                    <div class="welcome-buttons-wrap">
+                        <div class="welcome-continue-wrap">
+                            <button id="continueGameBtn" class="btn">Continue</button>
+                        </div>
+                        <div class="title-page-actions">
+                            <button id="newGameBtn" class="btn">New game</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="gameInfoModal" class="promotion-modal" aria-hidden="true">
+            <div class="variants-info-content">
+                <div class="variants-info-title">Reversi — rules</div>
+                <div class="variant-item"><strong>Objective.</strong> <span>Finish with more discs of your color than your opponent.</span></div>
+                <div class="variant-item"><strong>Move.</strong> <span>Place a disc on an empty square so that at least one straight line (horizontal, vertical, or diagonal) runs from your new disc through one or more opponent discs to another disc of your color. All opponent discs on that line are flipped to your color.</span></div>
+                <div class="variant-item"><strong>Pass.</strong> <span>If you have no valid move, you must pass. When both players pass in a row, the game ends. The player with more discs wins; equal count is a draw.</span></div>
+                <div class="variant-item"><strong>Start.</strong> <span>Black moves first. The initial four discs are placed in the center; valid first moves are only those that flip at least one white disc.</span></div>
+                <button type="button" id="gameInfoClose" class="variants-info-close">Close</button>
+            </div>
+        </div>
+        <div id="welcomeFooter" style="display: block;">
+            <span>Edition 1.0</span>
+        </div>
+        <div class="game-area">
+            <div class="main-column">
+                <div class="info">
+                    <button id="backBtn" class="btn btn-nav btn-nav-back" type="button"></button>
+                    <div class="info-center">
+                        <div class="status" id="status">Black to move</div>
+                        <div class="score" id="scoreTop"></div>
+                    </div>
+                    <button id="forwardBtn" class="btn btn-nav btn-nav-forward" type="button"></button>
+                </div>
+                <div class="board-container">
+                    <div class="board" id="board"></div>
+                </div>
+                <div class="info-bottom">
+                    <button id="backBtnBottom" class="btn btn-nav btn-nav-back" type="button"></button>
+                    <div class="info-center">
+                        <div class="status-bottom" id="statusBottom">Black to move</div>
+                        <div class="score" id="scoreBottom"></div>
+                    </div>
+                    <button id="forwardBtnBottom" class="btn btn-nav btn-nav-forward" type="button"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/games-common.js"></script>
+    <script>
+        var DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+        var pieceSymbols = {};
+        (function() {
+            var discSvg = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="' + PIECE_BLACK_FILL + '" stroke="' + PIECE_BLACK_STROKE + '" stroke-width="3"/></svg>';
+            pieceSymbols['b'] = discSvg;
+            pieceSymbols['w'] = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="' + PIECE_WHITE_FILL + '" stroke="' + PIECE_WHITE_STROKE + '" stroke-width="3"/></svg>';
+        })();
+        var board;
+        var currentTurn = 'b';
+        var gameHistory = [];
+        var historyIndex = -1;
+        var lastMove = null;
+        var isGameOver = false;
+        var hasAutoSaved = false;
+        var lastTurnWasPass = false;
+        var boardElement = document.getElementById('board');
+        var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
+        var scoreElements = [document.getElementById('scoreTop'), document.getElementById('scoreBottom')];
+        var squareElements = [];
+        function getFlips(b, r, c, color) {
+            var flips = [];
+            var opp = color === 'b' ? 'w' : 'b';
+            for (var d = 0; d < DIRS.length; d++) {
+                var dr = DIRS[d][0], dc = DIRS[d][1];
+                var list = [];
+                var nr = r + dr, nc = c + dc;
+                while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && b[nr][nc] === opp) {
+                    list.push({row: nr, col: nc});
+                    nr += dr;
+                    nc += dc;
+                }
+                if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && b[nr][nc] === color && list.length > 0) {
+                    for (var i = 0; i < list.length; i++) flips.push(list[i]);
+                }
+            }
+            return flips;
+        }
+        function getLegalMoves(b, color) {
+            var moves = [];
+            for (var r = 0; r < 8; r++) {
+                for (var c = 0; c < 8; c++) {
+                    if (b[r][c] !== '') continue;
+                    if (getFlips(b, r, c, color).length > 0) moves.push({row: r, col: c});
+                }
+            }
+            return moves;
+        }
+        function startNewGame() {
+            board = [
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','w','b','','',''],
+                ['','','','b','w','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','','']
+            ];
+            currentTurn = 'b';
+            gameHistory = [];
+            historyIndex = -1;
+            lastMove = null;
+            isGameOver = false;
+            lastTurnWasPass = false;
+            clearSavedGame();
+            initBoard();
+            applyPassIfNeeded();
+            saveState();
+            renderBoard();
+            refreshEink();
+        }
+        function initBoard() {
+            boardElement.innerHTML = '';
+            squareElements = [];
+            for (var row = 0; row < 8; row++) {
+                for (var col = 0; col < 8; col++) {
+                    var square = document.createElement('div');
+                    square.className = 'square';
+                    square.classList.add('rank' + (8 - row));
+                    square.classList.add('file' + (col + 1));
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    square.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        handleSquareClick.call(this, e);
+                    }, {passive: false});
+                    square.onclick = handleSquareClick;
+                    var pieceContainer = document.createElement('div');
+                    pieceContainer.className = 'piece';
+                    square.appendChild(pieceContainer);
+                    boardElement.appendChild(square);
+                    squareElements.push(square);
+                }
+            }
+        }
+        function applyPassIfNeeded() {
+            if (isGameOver) return;
+            var moves = getLegalMoves(board, currentTurn);
+            if (moves.length > 0) return;
+            var opp = currentTurn === 'b' ? 'w' : 'b';
+            if (getLegalMoves(board, opp).length > 0) {
+                lastTurnWasPass = true;
+                currentTurn = opp;
+                applyPassIfNeeded();
+            } else {
+                lastTurnWasPass = false;
+                isGameOver = true;
+            }
+        }
+        function renderBoard() {
+            boardElement.className = 'board ' + (currentTurn === 'b' ? 'black-turn' : 'white-turn');
+            var legalMoves = isGameOver ? [] : getLegalMoves(board, currentTurn);
+            for (var row = 0; row < 8; row++) {
+                for (var col = 0; col < 8; col++) {
+                    var idx = row * 8 + col;
+                    var sqEl = squareElements[idx];
+                    var pieceCont = sqEl.querySelector('.piece');
+                    var piece = board[row][col];
+                    sqEl.classList.remove('last-move', 'possible-move');
+                    if (lastMove && lastMove.row === row && lastMove.col === col) {
+                        sqEl.classList.add('last-move');
+                    }
+                    var isLegal = false;
+                    for (var i = 0; i < legalMoves.length; i++) {
+                        if (legalMoves[i].row === row && legalMoves[i].col === col) {
+                            isLegal = true;
+                            break;
+                        }
+                    }
+                    if (isLegal) sqEl.classList.add('possible-move');
+                    var newContent = piece ? pieceSymbols[piece] : '';
+                    if (pieceCont.getAttribute('data-piece') !== (piece || 'empty')) {
+                        pieceCont.innerHTML = newContent;
+                        pieceCont.setAttribute('data-piece', piece || 'empty');
+                    }
+                }
+            }
+            updateStatus();
+            updateButtons();
+        }
+        function handleSquareClick(e) {
+            if (isGameOver) return;
+            var row = +e.currentTarget.dataset.row;
+            var col = +e.currentTarget.dataset.col;
+            var legalMoves = getLegalMoves(board, currentTurn);
+            var valid = false;
+            for (var i = 0; i < legalMoves.length; i++) {
+                if (legalMoves[i].row === row && legalMoves[i].col === col) {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid) return;
+            var flips = getFlips(board, row, col, currentTurn);
+            for (var i = 0; i < flips.length; i++) {
+                board[flips[i].row][flips[i].col] = currentTurn;
+            }
+            board[row][col] = currentTurn;
+            lastMove = {row: row, col: col};
+            currentTurn = currentTurn === 'b' ? 'w' : 'b';
+            lastTurnWasPass = false;
+            saveState();
+            applyPassIfNeeded();
+            renderBoard();
+        }
+        function cloneBoard(src) {
+            var dst = [];
+            for (var i = 0; i < 8; i++) dst[i] = src[i].slice();
+            return dst;
+        }
+        function getBoardHash(b, turn) {
+            var s = '';
+            for (var i = 0; i < 8; i++) s += b[i].join(',') + '/';
+            return s + '|' + turn;
+        }
+        function saveState() {
+            gameHistory = gameHistory.slice(0, historyIndex + 1);
+            gameHistory.push({
+                board: cloneBoard(board),
+                currentTurn: currentTurn,
+                lastMove: lastMove ? {row: lastMove.row, col: lastMove.col} : null,
+                isGameOver: isGameOver,
+                lastTurnWasPass: lastTurnWasPass,
+                hash: getBoardHash(board, currentTurn)
+            });
+            historyIndex++;
+            if (hasAutoSaved) saveGame();
+        }
+        function restoreState(idx) {
+            if (idx < 0 || idx >= gameHistory.length) return;
+            historyIndex = idx;
+            var s = gameHistory[idx];
+            board = cloneBoard(s.board);
+            currentTurn = s.currentTurn;
+            lastMove = s.lastMove ? {row: s.lastMove.row, col: s.lastMove.col} : null;
+            isGameOver = s.isGameOver;
+            lastTurnWasPass = s.lastTurnWasPass === true;
+            renderBoard();
+        }
+        function updateStatus() {
+            var bCount = 0, wCount = 0;
+            for (var r = 0; r < 8; r++) {
+                for (var c = 0; c < 8; c++) {
+                    if (board[r][c] === 'b') bCount++;
+                    else if (board[r][c] === 'w') wCount++;
+                }
+            }
+            var statusTop = '';
+            var statusBottom = '';
+            if (isGameOver) {
+                if (bCount > wCount) statusTop = statusBottom = 'Black wins!';
+                else if (wCount > bCount) statusTop = statusBottom = 'White wins!';
+                else statusTop = statusBottom = 'Draw!';
+            } else {
+                if (lastTurnWasPass) {
+                    var passMsg = (currentTurn === 'b' ? 'White had no moves — Black' : 'Black had no moves — White') + ' to move';
+                    statusTop = statusBottom = passMsg;
+                } else {
+                    if (currentTurn === 'b') {
+                        statusTop = 'Your move';
+                        statusBottom = 'Black to move';
+                    } else {
+                        statusTop = 'White to move';
+                        statusBottom = 'Your move';
+                    }
+                }
+            }
+            if (statusElements[0]) statusElements[0].textContent = statusTop;
+            if (statusElements[1]) statusElements[1].textContent = statusBottom;
+            var scoreText = bCount + ' – ' + wCount;
+            if (scoreElements[0]) scoreElements[0].textContent = scoreText;
+            if (scoreElements[1]) scoreElements[1].textContent = scoreText;
+        }
+        function updateButtons() {
+            updateHistoryButtons(['backBtn', 'backBtnBottom'], ['forwardBtn', 'forwardBtnBottom'], historyIndex, gameHistory.length, { isGameOver: isGameOver });
+        }
+        function saveGame() {
+            var gameData = {
+                board: board,
+                currentTurn: currentTurn,
+                lastMove: lastMove,
+                gameHistory: gameHistory,
+                historyIndex: historyIndex,
+                isGameOver: isGameOver,
+                timestamp: new Date().toISOString()
+            };
+            saveJSON('reversiGameSave', gameData);
+        }
+        function loadGame() {
+            var data = loadJSON('reversiGameSave');
+            if (!data) return false;
+            board = data.board;
+            currentTurn = data.currentTurn;
+            lastMove = data.lastMove;
+            gameHistory = data.gameHistory || [];
+            historyIndex = data.historyIndex != null ? data.historyIndex : gameHistory.length - 1;
+            isGameOver = data.isGameOver;
+            var s = gameHistory[historyIndex];
+            lastTurnWasPass = s && s.lastTurnWasPass === true;
+            renderBoard();
+            return true;
+        }
+        function clearSavedGame() {
+            clearSaved('reversiGameSave');
+        }
+        bindHistoryBack(['backBtn', 'backBtnBottom'], function() { if (historyIndex > 0) restoreState(historyIndex - 1); });
+        bindHistoryForward(['forwardBtn', 'forwardBtnBottom'], function() {
+            if (this.classList.contains('btn-new')) startNewGame();
+            else if (historyIndex < gameHistory.length - 1) restoreState(historyIndex + 1);
+        });
+        function startGame() {
+            initBackToWelcome('welcomeModal', 'welcomeFooter');
+            runWelcomeFlow({
+                modalId: 'welcomeModal',
+                footerId: 'welcomeFooter',
+                hasSave: function() { return !!loadJSON('reversiGameSave'); },
+                continueBtnId: 'continueGameBtn',
+                onContinue: function() {
+                    pushStatePlaying();
+                    hideWelcome('welcomeModal', 'welcomeFooter');
+                    initBoard();
+                    if (loadGame()) { hasAutoSaved = true; refreshEink(); }
+                    else startNewGame();
+                },
+                newButtons: [{ id: 'newGameBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame(); hasAutoSaved = true; } }],
+                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn', closeBtnId: 'gameInfoClose' }
+            });
+        }
+        initDoubleTapFullscreen('.board-container');
+        runOnReady(startGame);
+    </script>
+    <script>registerServiceWorker();</script>
+</body>
+</html>

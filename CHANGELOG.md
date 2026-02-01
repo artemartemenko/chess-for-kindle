@@ -1,5 +1,13 @@
 ## Changelog
 
+### Version 1.3 - 2025-01-30
+* Improved touch responsiveness.
+* Full screen mode when double tapping outside the field.
+
+**Bug fixes**
+* Added highlighting of the move when capturing a pawn en passant.
+* Fixed move highlighting on iOS 9.3.6.
+
 ### Version 1.2 - 2025-01-28
 * Chess can now be played offline!
 

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Peg Solitaire for Kindle</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/games-common.css">
+    <style>
+        .btn { width: 48px; flex: 0 0 48px; }
+        .score-bottom { font-size: 13px; font-weight: bold; color: #6b5b4f; line-height: 1.2; margin-top: 2px; }
+        .board {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            background: transparent;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(7, 1fr);
+        }
+        .hole {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+            position: relative;
+            background: #b58863;
+            border: 1px solid #a07850;
+        }
+        .hole::before { display: none; }
+        .hole.invalid { background: transparent; border-color: transparent; pointer-events: none; }
+        .hole.selected .peg-dot { box-shadow: 0 0 0 5px var(--color-bg-modal); }
+        .hole.possible::after {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            top: 35%;
+            left: 35%;
+            background-color: #5a5a5a;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hole .peg-dot {
+            width: 60%;
+            height: 60%;
+            border-radius: 50%;
+            background: var(--piece-black-fill);
+            border: 1px solid #1a1a1a;
+            position: relative;
+            z-index: 1;
+        }
+        .hole .peg-dot.hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="eink-refresh-overlay"></div>
+    <div class="container">
+        <div id="welcomeModal" class="promotion-modal">
+            <div class="promotion-content title-page">
+                <div class="welcome-back-wrap">
+                    <a href="../" class="welcome-back-link" title="Contents"></a>
+                </div>
+                <div class="welcome-variants-info-wrap">
+                    <button type="button" id="gameInfoBtn" class="welcome-variants-info-btn" title="About the game"></button>
+                </div>
+                <div class="promotion-content-inner">
+                    <p class="chapter-label">Chapter 4</p>
+                    <h1 class="promotion-title">Peg Solitaire</h1>
+                    <div class="welcome-buttons-wrap">
+                        <div class="welcome-continue-wrap">
+                            <button id="continueGameBtn" class="btn">Continue</button>
+                        </div>
+                        <div class="title-page-actions">
+                            <button id="newGameEnglishBtn" class="btn" style="margin-bottom: 10px;">English (33)</button>
+                            <button id="newGameFrenchBtn" class="btn">French (37)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="gameInfoModal" class="promotion-modal" aria-hidden="true">
+            <div class="variants-info-content">
+                <div class="variants-info-title">Peg Solitaire</div>
+                <div class="variant-item">Jump a peg over an adjacent peg into an empty cell; the jumped peg is removed. Only horizontal and vertical jumps. Goal: leave a single peg on the board (ideally in the center).</div>
+                <div class="variant-item"><strong>English</strong> (33) and <strong>French</strong> (37) differ only in board shape.</div>
+                <button type="button" id="gameInfoClose" class="variants-info-close">Close</button>
+            </div>
+        </div>
+        <div id="welcomeFooter" style="display: block;"><span>Edition 1.0</span></div>
+        <div class="game-area">
+            <div class="main-column">
+                <div class="board-container">
+                    <div id="board" class="board"></div>
+                </div>
+                <div class="info-bottom">
+                    <button id="backBtnBottom" class="btn btn-nav btn-nav-back" type="button"></button>
+                    <div class="info-center">
+                        <div class="status-bottom" id="statusBottom"></div>
+                        <div class="score-bottom" id="scoreBottom">Pegs: 32</div>
+                    </div>
+                    <button id="forwardBtnBottom" class="btn btn-nav btn-nav-forward" type="button"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/games-common.js"></script>
+    <script>
+        var VALID_ENGLISH = [
+            [0,0,1,1,1,0,0], [0,0,1,1,1,0,0], [1,1,1,1,1,1,1], [1,1,1,1,1,1,1], [1,1,1,1,1,1,1], [0,0,1,1,1,0,0], [0,0,1,1,1,0,0]
+        ];
+        var VALID_FRENCH = [
+            [0,0,1,1,1,0,0], [0,1,1,1,1,1,0], [1,1,1,1,1,1,1], [1,1,1,1,1,1,1], [1,1,1,1,1,1,1], [0,1,1,1,1,1,0], [0,0,1,1,1,0,0]
+        ];
+        var VALID = VALID_ENGLISH;
+        var boardVariant = 'english';
+        var board = [];
+        var selectedCell = null;
+        var gameHistory = [];
+        var historyIndex = -1;
+        var isGameOver = false;
+        var boardEl, statusBottomEl, scoreBottomEl;
+        var hasAutoSaved = false;
+        function initBoard() {
+            for (var r = 0; r < 7; r++) {
+                board[r] = [];
+                for (var c = 0; c < 7; c++) {
+                    board[r][c] = VALID[r][c] ? 1 : -1;
+                }
+            }
+            board[3][3] = 0;
+        }
+        function getLegalMoves() {
+            var moves = [];
+            for (var r = 0; r < 7; r++) {
+                for (var c = 0; c < 7; c++) {
+                    if (board[r][c] !== 1) continue;
+                    var dirs = [[-2,0], [2,0], [0,-2], [0,2]];
+                    for (var d = 0; d < dirs.length; d++) {
+                        var nr = r + dirs[d][0], nc = c + dirs[d][1];
+                        var mr = r + dirs[d][0]/2, mc = c + dirs[d][1]/2;
+                        if (nr < 0 || nr > 6 || nc < 0 || nc > 6) continue;
+                        if (!VALID[nr][nc] || board[nr][nc] !== 0) continue;
+                        if (!VALID[mr][mc] || board[mr][mc] !== 1) continue;
+                        moves.push({ fromR: r, fromC: c, toR: nr, toC: nc, midR: mr, midC: mc });
+                    }
+                }
+            }
+            return moves;
+        }
+        function getMovesFrom(r, c) {
+            var moves = getLegalMoves();
+            var out = [];
+            for (var i = 0; i < moves.length; i++) {
+                if (moves[i].fromR === r && moves[i].fromC === c) out.push(moves[i]);
+            }
+            return out;
+        }
+        function applyMove(m) {
+            board[m.fromR][m.fromC] = 0;
+            board[m.midR][m.midC] = 0;
+            board[m.toR][m.toC] = 1;
+        }
+        function pegCount() {
+            var n = 0;
+            for (var r = 0; r < 7; r++) for (var c = 0; c < 7; c++) if (board[r][c] === 1) n++;
+            return n;
+        }
+        function checkGameOver() {
+            if (getLegalMoves().length > 0) return false;
+            isGameOver = true;
+            return true;
+        }
+        function buildBoard() {
+            boardEl.innerHTML = '';
+            for (var r = 0; r < 7; r++) {
+                for (var c = 0; c < 7; c++) {
+                    var cell = document.createElement('div');
+                    cell.className = 'hole';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    if (!VALID[r][c]) cell.classList.add('invalid');
+                    var dot = document.createElement('div');
+                    dot.className = 'peg-dot' + (board[r][c] !== 1 ? ' hidden' : '');
+                    cell.appendChild(dot);
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+        function render() {
+            var cells = boardEl.querySelectorAll('.hole');
+            for (var i = 0; i < cells.length; i++) {
+                var cell = cells[i];
+                var r = parseInt(cell.dataset.row, 10), c = parseInt(cell.dataset.col, 10);
+                if (!VALID[r][c]) continue;
+                cell.classList.remove('selected', 'possible');
+                var dot = cell.querySelector('.peg-dot');
+                if (dot) {
+                    if (board[r][c] === 1) dot.classList.remove('hidden');
+                    else dot.classList.add('hidden');
+                }
+                if (selectedCell && selectedCell[0] === r && selectedCell[1] === c) cell.classList.add('selected');
+            }
+            if (selectedCell) {
+                var moves = getMovesFrom(selectedCell[0], selectedCell[1]);
+                for (var i = 0; i < moves.length; i++) {
+                    var to = boardEl.querySelector('.hole[data-row="' + moves[i].toR + '"][data-col="' + moves[i].toC + '"]');
+                    if (to) to.classList.add('possible');
+                }
+            }
+            var pegs = pegCount();
+            scoreBottomEl.textContent = 'Pegs: ' + pegs;
+            var statusText = '';
+            if (isGameOver) {
+                if (pegs === 1) statusText = 'You win!';
+                else statusText = 'No moves left.';
+            }
+            statusBottomEl.textContent = statusText;
+            updateButtons();
+        }
+        function onCellClick(e) {
+            if (isGameOver) return;
+            var cell = e.target.closest('.hole');
+            if (!cell || cell.classList.contains('invalid')) return;
+            var r = parseInt(cell.dataset.row, 10), c = parseInt(cell.dataset.col, 10);
+            if (selectedCell) {
+                var moves = getMovesFrom(selectedCell[0], selectedCell[1]);
+                for (var i = 0; i < moves.length; i++) {
+                    if (moves[i].toR === r && moves[i].toC === c) {
+                        applyMove(moves[i]);
+                        selectedCell = null;
+                        checkGameOver();
+                        saveState();
+                        render();
+                        return;
+                    }
+                }
+                selectedCell = (board[r][c] === 1) ? [r, c] : null;
+            } else {
+                selectedCell = (board[r][c] === 1) ? [r, c] : null;
+            }
+            render();
+        }
+        function cloneBoard() {
+            var b = [];
+            for (var r = 0; r < 7; r++) { b[r] = board[r].slice(); }
+            return b;
+        }
+        function saveState() {
+            gameHistory = gameHistory.slice(0, historyIndex + 1);
+            gameHistory.push({ board: cloneBoard(), isGameOver: isGameOver, variant: boardVariant });
+            historyIndex++;
+            if (hasAutoSaved) saveGame();
+        }
+        function saveGame() {
+            if (gameHistory.length === 0) return;
+            saveJSON('pegSolitaireSave', { gameHistory: gameHistory, historyIndex: historyIndex });
+        }
+        function restoreState(idx) {
+            if (idx < 0 || idx >= gameHistory.length) return;
+            historyIndex = idx;
+            var s = gameHistory[idx];
+            for (var r = 0; r < 7; r++) for (var c = 0; c < 7; c++) board[r][c] = s.board[r][c];
+            isGameOver = s.isGameOver;
+            selectedCell = null;
+            render();
+        }
+        function updateButtons() {
+            updateHistoryButtons(['backBtnBottom'], ['forwardBtnBottom'], historyIndex, gameHistory.length, { isGameOver: isGameOver });
+        }
+        function startNewGame(variant) {
+            boardVariant = variant || 'english';
+            VALID = boardVariant === 'french' ? VALID_FRENCH : VALID_ENGLISH;
+            initBoard();
+            selectedCell = null;
+            gameHistory = [];
+            historyIndex = -1;
+            isGameOver = false;
+            clearSaved('pegSolitaireSave');
+            buildBoard();
+            saveState();
+            render();
+            refreshEink();
+        }
+        runOnReady(function() {
+            boardEl = document.getElementById('board');
+            statusBottomEl = document.getElementById('statusBottom');
+            scoreBottomEl = document.getElementById('scoreBottom');
+            initBoard();
+            buildBoard();
+            boardEl.addEventListener('click', onCellClick);
+            bindButton('backBtnBottom', function() { if (historyIndex > 0) { restoreState(historyIndex - 1); updateButtons(); } });
+            bindButton('forwardBtnBottom', function() {
+                if (this.classList.contains('btn-new')) startNewGame(boardVariant);
+                else if (historyIndex < gameHistory.length - 1) { restoreState(historyIndex + 1); updateButtons(); }
+            });
+            function loadGame() {
+                var data = loadJSON('pegSolitaireSave');
+                if (!data) return false;
+                gameHistory = data.gameHistory || [];
+                historyIndex = data.historyIndex != null ? data.historyIndex : gameHistory.length - 1;
+                if (gameHistory.length > 0) {
+                    var s = gameHistory[historyIndex];
+                    boardVariant = s.variant || 'english';
+                    VALID = boardVariant === 'french' ? VALID_FRENCH : VALID_ENGLISH;
+                    for (var r = 0; r < 7; r++) for (var c = 0; c < 7; c++) board[r][c] = s.board[r][c];
+                    isGameOver = s.isGameOver;
+                }
+                buildBoard();
+                render();
+                return true;
+            }
+            function hasSave() {
+                var d = loadJSON('pegSolitaireSave');
+                return d && d.gameHistory && d.gameHistory.length > 1;
+            }
+            initBackToWelcome('welcomeModal', 'welcomeFooter');
+            runWelcomeFlow({
+                modalId: 'welcomeModal',
+                footerId: 'welcomeFooter',
+                hasSave: hasSave,
+                continueBtnId: 'continueGameBtn',
+                onContinue: function() {
+                    pushStatePlaying();
+                    hideWelcome('welcomeModal', 'welcomeFooter');
+                    initBoard();
+                    buildBoard();
+                    if (loadGame()) { hasAutoSaved = true; refreshEink(); }
+                    else { startNewGame('english'); hasAutoSaved = true; }
+                },
+                newButtons: [
+                    { id: 'newGameEnglishBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame('english'); hasAutoSaved = true; } },
+                    { id: 'newGameFrenchBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame('french'); hasAutoSaved = true; } }
+                ],
+                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn', closeBtnId: 'gameInfoClose' }
+            });
+            initDoubleTapFullscreen('.board-container');
+        });
+        registerServiceWorker();
+    </script>
+</body>
+</html>
