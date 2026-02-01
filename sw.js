@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chess-v17';
+const CACHE_NAME = 'chess-v18';
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -10,7 +10,8 @@ self.addEventListener('install', event => {
         './reversi/', './reversi/index.html',
         './peg-solitaire/', './peg-solitaire/index.html',
         './backgammon/', './backgammon/index.html',
-        './css/games-common.css'
+        './css/games-common.css',
+        './js/games-common.js'
       ]))
   );
 });

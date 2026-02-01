@@ -134,6 +134,9 @@
                 .then(reg => console.log('SW registered'))
                 .catch(err => console.log('SW error:', err));
         }
+        ['chess/', 'checkers/', 'reversi/', 'peg-solitaire/', 'backgammon/'].forEach(function(path) {
+            fetch(path, { mode: 'same-origin' }).catch(function() {});
+        });
     </script>
 </body>
 </html>
