@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chess-v19';
+const CACHE_NAME = 'chess-v22';
 
 function cacheUrl(path) {
   return new URL(path, self.registration.scope).href;

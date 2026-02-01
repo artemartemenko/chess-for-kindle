@@ -209,7 +209,18 @@ function hideModal(elOrId) {
 function bindModal(modalId, openBtnId, closeBtnId) {
     var modal = document.getElementById(modalId);
     var openBtn = document.getElementById(openBtnId);
-    var closeBtn = document.getElementById(closeBtnId);
+    var closeBtn = closeBtnId ? document.getElementById(closeBtnId) : null;
+    if (!closeBtn && modal) {
+        var content = modal.querySelector('.variants-info-content');
+        closeBtn = content ? content.querySelector('.variants-info-close') : null;
+        if (!closeBtn && content) {
+            closeBtn = document.createElement('button');
+            closeBtn.type = 'button';
+            closeBtn.className = 'variants-info-close';
+            closeBtn.setAttribute('aria-label', 'Close');
+            content.appendChild(closeBtn);
+        }
+    }
     if (openBtn) bindButton(openBtn, function() { showModal(modal); });
     if (closeBtn) bindButton(closeBtn, function() { hideModal(modal); });
     if (modal) modal.onclick = function(e) { if (e.target === modal) hideModal(modal); };
@@ -281,3 +292,10 @@ function initPageSvgs() {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPageSvgs);
 else initPageSvgs();
+
+runOnReady(function() {
+    if (document.querySelector('.board-container')) {
+        initDoubleTapFullscreen('.board-container');
+        registerServiceWorker('../sw.js');
+    }
+});

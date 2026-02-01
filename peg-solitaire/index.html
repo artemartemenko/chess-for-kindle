@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Peg Solitaire for Kindle</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWVNRDSRLJ');
+    </script>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
@@ -89,7 +96,6 @@
                 <div class="variants-info-title">Peg Solitaire</div>
                 <div class="variant-item">Jump a peg over an adjacent peg into an empty cell; the jumped peg is removed. Only horizontal and vertical jumps. Goal: leave a single peg on the board (ideally in the center).</div>
                 <div class="variant-item"><strong>English</strong> (33) and <strong>French</strong> (37) differ only in board shape.</div>
-                <button type="button" id="gameInfoClose" class="variants-info-close">Close</button>
             </div>
         </div>
         <div id="welcomeFooter" style="display: block;"><span>Edition 1.0</span></div>
@@ -337,11 +343,9 @@
                     { id: 'newGameEnglishBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame('english'); hasAutoSaved = true; } },
                     { id: 'newGameFrenchBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame('french'); hasAutoSaved = true; } }
                 ],
-                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn', closeBtnId: 'gameInfoClose' }
+                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn' }
             });
-            initDoubleTapFullscreen('.board-container');
         });
-        registerServiceWorker();
     </script>
 </body>
 </html>

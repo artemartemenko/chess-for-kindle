@@ -96,9 +96,6 @@
                 <div class="variants-info-content">
                     <div class="variants-info-title">Chess</div>
                     <div class="variant-item">Double-tap any empty square to <strong>lock piece rotation</strong>.</div>
-                    <div class="variant-item">Double-tap outside the board to toggle <strong>fullscreen</strong>.</div>
-                    <div class="variant-item">Offline mode implemented.</div>
-                    <button type="button" id="gameInfoClose" class="variants-info-close">Close</button>
                 </div>
             </div>
 
@@ -954,13 +951,11 @@
                     else startNewGame();
                 },
                 newButtons: [{ id: 'newGameBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame(); hasAutoSaved = true; } }],
-                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn', closeBtnId: 'gameInfoClose' }
+                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn' }
             });
         }
 
-        initDoubleTapFullscreen('.board-container');
         runOnReady(startGame);
     </script>
-    <script>registerServiceWorker();</script>
 </body>
 </html>

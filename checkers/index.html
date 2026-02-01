@@ -70,8 +70,6 @@
                     <div class="variant-item"><strong>Brazilian</strong> (8×8)<br><span>White moves first. Flying kings. Simple pieces jump backward. Max capture required.</span></div>
                     <div class="variant-item"><strong>International</strong> (10×10)<br><span>White moves first. Flying kings. Simple pieces jump backward in series. Max capture required.</span></div>
                     <div class="variant-item"><strong>Canadian</strong> (12×12)<br><span>White moves first. Flying kings. Simple pieces jump backward in series. Max capture required.</span></div>
-                    
-                    <button type="button" id="variantsInfoClose" class="variants-info-close">Close</button>
                 </div>
             </div>
 
@@ -701,13 +699,11 @@
                     { id: 'modeBrazilianBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('brazilian'); startNewGame(); hasAutoSaved = true; } },
                     { id: 'modeCanadianBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); setGameMode('canadian'); startNewGame(); hasAutoSaved = true; } }
                 ],
-                infoModal: { modalId: 'variantsInfoModal', openBtnId: 'variantsInfoBtn', closeBtnId: 'variantsInfoClose' }
+                infoModal: { modalId: 'variantsInfoModal', openBtnId: 'variantsInfoBtn' }
             });
         }
 
-        initDoubleTapFullscreen('.board-container');
         runOnReady(startGame);
     </script>
-    <script>registerServiceWorker();</script>
 </body>
 </html>

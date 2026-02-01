@@ -463,8 +463,6 @@ body.fullscreen-mode .main-column {
     height: 32px;
     margin: 16px;
     padding: 0;
-    font-size: 0;
-    line-height: 1;
     border: none;
     background: transparent;
     color: var(--color-text);

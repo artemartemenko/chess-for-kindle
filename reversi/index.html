@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Reversi for Kindle</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWVNRDSRLJ');
+    </script>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
@@ -82,7 +89,6 @@
                 <div class="variant-item"><strong>Move.</strong> <span>Place a disc on an empty square so that at least one straight line (horizontal, vertical, or diagonal) runs from your new disc through one or more opponent discs to another disc of your color. All opponent discs on that line are flipped to your color.</span></div>
                 <div class="variant-item"><strong>Pass.</strong> <span>If you have no valid move, you must pass. When both players pass in a row, the game ends. The player with more discs wins; equal count is a draw.</span></div>
                 <div class="variant-item"><strong>Start.</strong> <span>Black moves first. The initial four discs are placed in the center; valid first moves are only those that flip at least one white disc.</span></div>
-                <button type="button" id="gameInfoClose" class="variants-info-close">Close</button>
             </div>
         </div>
         <div id="welcomeFooter" style="display: block;">
@@ -399,12 +405,10 @@
                     else startNewGame();
                 },
                 newButtons: [{ id: 'newGameBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame(); hasAutoSaved = true; } }],
-                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn', closeBtnId: 'gameInfoClose' }
+                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn' }
             });
         }
-        initDoubleTapFullscreen('.board-container');
         runOnReady(startGame);
     </script>
-    <script>registerServiceWorker();</script>
 </body>
 </html>
