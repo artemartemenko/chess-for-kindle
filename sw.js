@@ -56,10 +56,14 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME)
-          .then(cache => cache.put(event.request, responseClone));
+      .then(function(response) {
+        if (response && response.status === 200 && response.type === 'basic') {
+          var cacheKey = new Request(response.url, { method: 'GET' });
+          var responseClone = response.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            cache.put(cacheKey, responseClone);
+          });
+        }
         return response;
       })
       .catch(function() {
