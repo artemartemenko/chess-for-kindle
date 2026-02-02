@@ -4,24 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Peg Solitaire for Kindle</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
     <script>
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('dev') === '1' || urlParams.get('exclude_analytics') === '1') {
-        localStorage.setItem('exclude_from_analytics', 'true');
-    }
-    window.isDevMode = localStorage.getItem('exclude_from_analytics') === 'true';
-    if (!window.isDevMode) {
-        var script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ';
-        document.head.appendChild(script);
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-QWVNRDSRLJ');
-    } else {
-        function gtag(){}
-    }
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWVNRDSRLJ');
     </script>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
