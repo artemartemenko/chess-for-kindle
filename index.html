@@ -4,12 +4,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Book of Games</title>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
         <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-QWVNRDSRLJ');
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === '1' || urlParams.get('exclude_analytics') === '1') {
+            localStorage.setItem('exclude_from_analytics', 'true');
+        }
+        window.isDevMode = localStorage.getItem('exclude_from_analytics') === 'true';
+        if (!window.isDevMode) {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ';
+            document.head.appendChild(script);
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QWVNRDSRLJ');
+        } else {
+            function gtag(){}
+        }
         </script>
         <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
         <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
@@ -134,7 +146,8 @@
     </div>
     <div class="main-footer">
         <a href="https://github.com/artemartemenko/chess-for-kindle" target="_blank">GitHub</a>
-        <span> · Book of Games for Kindle</span>
+        <span> · </span>
+        <a href="https://ko-fi.com/artemartemenko" target="_blank">Buy me a coffee ☕</a>
     </div>
     <script>
         if ('serviceWorker' in navigator) {
@@ -144,6 +157,18 @@
         }
         ['chess/', 'checkers/', 'reversi/', 'peg-solitaire/', 'corners/', 'backgammon/'].forEach(function(path) {
             fetch(path, { mode: 'same-origin' }).catch(function() {});
+        });
+        document.querySelectorAll('.main-footer a').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                if (!window.isDevMode && typeof gtag === 'function') {
+                    var text = this.textContent.trim();
+                    gtag('event', 'click', {
+                        'event_category': 'outbound',
+                        'event_label': text,
+                        'transport_type': 'beacon'
+                    });
+                }
+            });
         });
     </script>
 </body>
