@@ -7,10 +7,10 @@
     --color-border-btn: #a08b6e;
     --color-disabled-bg: #e8e4dc;
     --color-disabled-text: #888;
-    --piece-white-fill: #faf7f2;
+    --piece-white-fill: #ffffff;
     --piece-white-stroke: #2c2c2c;
     --piece-black-fill: #2c2c2c;
-    --piece-black-stroke: #faf7f2;
+    --piece-black-stroke: #ffffff;
 }
 
 * {
