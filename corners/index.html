@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Corners for Kindle</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWVNRDSRLJ"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWVNRDSRLJ');
+    </script>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/games-common.css">
+    <style>
+        .board.size-8 .square-inner { pointer-events: none; }
+        .piece svg { width: 98%; height: 98%; }
+        .board.size-8 .square { width: 12.5%; height: 12.5%; }
+        .board.size-8 .square.rank1 { top: 87.5%; } .board.size-8 .square.rank2 { top: 75%; } .board.size-8 .square.rank3 { top: 62.5%; } .board.size-8 .square.rank4 { top: 50%; }
+        .board.size-8 .square.rank5 { top: 37.5%; } .board.size-8 .square.rank6 { top: 25%; } .board.size-8 .square.rank7 { top: 12.5%; } .board.size-8 .square.rank8 { top: 0%; }
+        .board.size-8 .square.file1 { left: 0%; } .board.size-8 .square.file2 { left: 12.5%; } .board.size-8 .square.file3 { left: 25%; } .board.size-8 .square.file4 { left: 37.5%; }
+        .board.size-8 .square.file5 { left: 50%; } .board.size-8 .square.file6 { left: 62.5%; } .board.size-8 .square.file7 { left: 75%; } .board.size-8 .square.file8 { left: 87.5%; }
+        .info-center .score,
+        .score-bottom { font-size: 13px; font-weight: bold; line-height: 1.2; margin-top: 2px; color: var(--color-muted); }
+        .info-center .score.score-leading,
+        .score-bottom.score-leading { color: #005500 !important; }
+        .info-center .score.score-losing,
+        .score-bottom.score-losing { color: #aa2222 !important; }
+    </style>
+</head>
+<body>
+    <div id="eink-refresh-overlay"></div>
+    <div class="container">
+        <div id="welcomeModal" class="promotion-modal">
+            <div class="promotion-content title-page">
+                <div class="welcome-back-wrap">
+                    <a href="../" class="welcome-back-link" title="Contents"></a>
+                </div>
+                <div class="welcome-variants-info-wrap">
+                    <button type="button" id="gameInfoBtn" class="welcome-variants-info-btn" title="About the game"></button>
+                </div>
+                <div class="promotion-content-inner">
+                    <p class="chapter-label">Chapter 3</p>
+                    <h1 class="promotion-title">Corners</h1>
+                    <div class="welcome-buttons-wrap">
+                        <div class="welcome-continue-wrap">
+                            <button id="continueGameBtn" class="btn">Continue</button>
+                        </div>
+                        <div class="title-page-actions">
+                            <button id="newGameBtn" class="btn">New game</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="gameInfoModal" class="promotion-modal" aria-hidden="true">
+            <div class="variants-info-content">
+                <div class="variants-info-title">Corners</div>
+                <div class="variant-item">Move all your pieces from your corner to the opposite corner.</div>
+                <div class="variant-item"><strong>Move:</strong> one square up, down, left, or right. <strong>Jump:</strong> over one piece (any color) along a straight line to the empty square beyond. You may chain jumps and change direction. First to get all pieces into the opposite corner wins.</div>
+            </div>
+        </div>
+        <div id="welcomeFooter" style="display: block;"><span>Edition 1.0</span></div>
+        <div class="game-area">
+            <div class="main-column">
+                <div class="info">
+                    <button id="backBtn" class="btn btn-nav btn-nav-back" type="button"></button>
+                    <div class="info-center">
+                        <div class="status" id="status">White to move</div>
+                        <div class="score" id="scoreTop">W 0 – 0 B</div>
+                    </div>
+                    <button id="forwardBtn" class="btn btn-nav btn-nav-forward" type="button"></button>
+                </div>
+                <div class="board-container">
+                    <div id="board" class="board size-8"></div>
+                </div>
+                <div class="info-bottom">
+                    <button id="backBtnBottom" class="btn btn-nav btn-nav-back" type="button"></button>
+                    <div class="info-center">
+                        <div class="status-bottom" id="statusBottom">White to move</div>
+                        <div class="score-bottom" id="scoreBottom">W 0 – 0 B</div>
+                    </div>
+                    <button id="forwardBtnBottom" class="btn btn-nav btn-nav-forward" type="button"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/games-common.js"></script>
+    <script>
+        var BOARD_SIZE = 8;
+        var WHITE_HOME = { rows: [5,6,7], cols: [0,1,2,3] };
+        var BLACK_HOME = { rows: [0,1,2], cols: [4,5,6,7] };
+        var WHITE_GOAL = { rows: [0,1,2], cols: [4,5,6,7] };
+        var BLACK_GOAL = { rows: [5,6,7], cols: [0,1,2,3] };
+
+        var ORTH = [[-1,0],[1,0],[0,-1],[0,1]];
+
+        function isWhiteHome(row, col) {
+            return WHITE_HOME.rows.indexOf(row) >= 0 && WHITE_HOME.cols.indexOf(col) >= 0;
+        }
+        function isBlackHome(row, col) {
+            return BLACK_HOME.rows.indexOf(row) >= 0 && BLACK_HOME.cols.indexOf(col) >= 0;
+        }
+        function isWhiteGoal(row, col) {
+            return WHITE_GOAL.rows.indexOf(row) >= 0 && WHITE_GOAL.cols.indexOf(col) >= 0;
+        }
+        function isBlackGoal(row, col) {
+            return BLACK_GOAL.rows.indexOf(row) >= 0 && BLACK_GOAL.cols.indexOf(col) >= 0;
+        }
+
+        function cloneBoard(b) {
+            var out = [];
+            for (var r = 0; r < b.length; r++) out[r] = b[r].slice();
+            return out;
+        }
+
+        function getJumpLandings(b, row, col, piece, results, visited) {
+            results = results || [];
+            visited = visited || {};
+            visited[row + ',' + col] = true;
+
+            for (var d = 0; d < ORTH.length; d++) {
+                var dr = ORTH[d][0], dc = ORTH[d][1];
+                var midR = row + dr, midC = col + dc;
+                var landR = row + 2*dr, landC = col + 2*dc;
+                if (midR < 0 || midR >= BOARD_SIZE || midC < 0 || midC >= BOARD_SIZE) continue;
+                if (landR < 0 || landR >= BOARD_SIZE || landC < 0 || landC >= BOARD_SIZE) continue;
+                if (!b[midR][midC]) continue;
+                if (b[landR][landC]) continue;
+                if (visited[landR + ',' + landC]) continue;
+
+                results.push({ row: landR, col: landC });
+
+                b[row][col] = '';
+                b[landR][landC] = piece;
+                getJumpLandings(b, landR, landC, piece, results, visited);
+                b[row][col] = piece;
+                b[landR][landC] = '';
+            }
+
+            delete visited[row + ',' + col];
+            return results;
+        }
+
+        function getPossibleMoves(row, col) {
+            var piece = board[row][col];
+            if (!piece) return [];
+            var moves = [];
+            for (var d = 0; d < ORTH.length; d++) {
+                var dr = ORTH[d][0], dc = ORTH[d][1];
+                var nr = row + dr, nc = col + dc;
+                if (nr < 0 || nr >= BOARD_SIZE || nc < 0 || nc >= BOARD_SIZE) continue;
+                if (!board[nr][nc]) moves.push({ row: nr, col: nc });
+            }
+            var b = cloneBoard(board);
+            var jumpLandings = getJumpLandings(b, row, col, piece);
+            for (var j = 0; j < jumpLandings.length; j++) {
+                var already = false;
+                for (var m = 0; m < moves.length; m++) {
+                    if (moves[m].row === jumpLandings[j].row && moves[m].col === jumpLandings[j].col) { already = true; break; }
+                }
+                if (!already) moves.push(jumpLandings[j]);
+            }
+            return moves;
+        }
+
+        function countInGoal(b, color) {
+            var rows = color === 'w' ? WHITE_GOAL.rows : BLACK_GOAL.rows;
+            var cols = color === 'w' ? WHITE_GOAL.cols : BLACK_GOAL.cols;
+            var n = 0;
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    if (b[r][c] === color && rows.indexOf(r) >= 0 && cols.indexOf(c) >= 0) n++;
+                }
+            }
+            return n;
+        }
+
+        function allInGoal(b, color) {
+            return countInGoal(b, color) === 12;
+        }
+
+        var pieceSymbols = {};
+        (function initPieceSymbols() {
+            var svg = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#454242" stroke="#fff" stroke-width="2"/></svg>';
+            pieceSymbols.w = svg.replace(/fill="#454242"/g, 'fill="' + PIECE_WHITE_FILL + '"').replace(/stroke="#fff"/g, 'stroke="' + PIECE_WHITE_STROKE + '"');
+            pieceSymbols.b = svg.replace(/fill="#454242"/g, 'fill="' + PIECE_BLACK_FILL + '"').replace(/stroke="#fff"/g, 'stroke="' + PIECE_BLACK_STROKE + '"');
+        })();
+
+        var board;
+        var currentTurn = 'w';
+        var selectedSquare = null;
+        var gameHistory = [];
+        var historyIndex = -1;
+        var lastMove = null;
+        var isGameOver = false;
+        var hasAutoSaved = false;
+
+        var boardElement = document.getElementById('board');
+        var statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
+        var scoreElements = [document.getElementById('scoreTop'), document.getElementById('scoreBottom')];
+        var squareElements = [];
+
+        function initBoardState() {
+            board = [];
+            for (var r = 0; r < BOARD_SIZE; r++) {
+                board[r] = [];
+                for (var c = 0; c < BOARD_SIZE; c++) {
+                    if (isWhiteHome(r, c)) board[r][c] = 'w';
+                    else if (isBlackHome(r, c)) board[r][c] = 'b';
+                    else board[r][c] = '';
+                }
+            }
+        }
+
+        function initBoard() {
+            boardElement.innerHTML = '';
+            squareElements = [];
+            var pct = 100 / BOARD_SIZE;
+            for (var row = 0; row < BOARD_SIZE; row++) {
+                for (var col = 0; col < BOARD_SIZE; col++) {
+                    var square = document.createElement('div');
+                    square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+                    square.classList.add('rank' + (BOARD_SIZE - row));
+                    square.classList.add('file' + (col + 1));
+                    square.style.position = 'absolute';
+                    square.style.boxSizing = 'border-box';
+                    square.style.width = pct + '%';
+                    square.style.height = pct + '%';
+                    square.style.top = (row * pct) + '%';
+                    square.style.left = (col * pct) + '%';
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    bindCell(square, handleSquareClick);
+
+                    if (col === 0) {
+                        var coordRank = document.createElement('span');
+                        coordRank.className = 'coord-rank';
+                        coordRank.textContent = (BOARD_SIZE - row).toString();
+                        square.appendChild(coordRank);
+                    }
+                    if (row === BOARD_SIZE - 1) {
+                        var coordFile = document.createElement('span');
+                        coordFile.className = 'coord-file';
+                        coordFile.textContent = String.fromCharCode(97 + col);
+                        square.appendChild(coordFile);
+                    }
+
+                    var squareInner = document.createElement('div');
+                    squareInner.className = 'square-inner';
+                    var pieceContainer = document.createElement('div');
+                    pieceContainer.className = 'piece';
+                    squareInner.appendChild(pieceContainer);
+                    square.appendChild(squareInner);
+
+                    boardElement.appendChild(square);
+                    squareElements.push(square);
+                }
+            }
+        }
+
+        function renderBoard() {
+            for (var row = 0; row < BOARD_SIZE; row++) {
+                for (var col = 0; col < BOARD_SIZE; col++) {
+                    var idx = row * BOARD_SIZE + col;
+                    var sqEl = squareElements[idx];
+                    var pieceCont = sqEl.querySelector('.piece');
+                    var piece = board[row][col];
+
+                    sqEl.classList.remove('selected', 'possible-move', 'possible-capture', 'last-move');
+
+                    if (lastMove) {
+                        if ((lastMove.from.row === row && lastMove.from.col === col) || (lastMove.to.row === row && lastMove.to.col === col)) {
+                            sqEl.classList.add('last-move');
+                        }
+                    }
+
+                    var newContent = piece ? pieceSymbols[piece] : '';
+                    if (pieceCont.getAttribute('data-piece') !== (piece || 'empty')) {
+                        pieceCont.innerHTML = newContent;
+                        pieceCont.setAttribute('data-piece', piece || 'empty');
+                    }
+                }
+            }
+            updateStatus();
+            updateButtons();
+        }
+
+        function handleSquareClick(e) {
+            if (isGameOver) return;
+            var row = +e.currentTarget.dataset.row;
+            var col = +e.currentTarget.dataset.col;
+
+            if (selectedSquare) {
+                var moves = getPossibleMoves(selectedSquare.row, selectedSquare.col);
+                var valid = false;
+                for (var i = 0; i < moves.length; i++) {
+                    if (moves[i].row === row && moves[i].col === col) {
+                        valid = true;
+                        break;
+                    }
+                }
+                if (valid) {
+                    makeMove(selectedSquare.row, selectedSquare.col, row, col);
+                    clearSelection();
+                } else if (board[row][col] === currentTurn) {
+                    selectSquare(row, col);
+                } else {
+                    clearSelection();
+                }
+            } else {
+                if (board[row][col] === currentTurn) {
+                    selectSquare(row, col);
+                }
+            }
+        }
+
+        function selectSquare(row, col) {
+            selectedSquare = { row: row, col: col };
+            renderBoard();
+            squareElements[row * BOARD_SIZE + col].classList.add('selected');
+            var moves = getPossibleMoves(row, col);
+            for (var i = 0; i < moves.length; i++) {
+                var m = moves[i];
+                squareElements[m.row * BOARD_SIZE + m.col].classList.add('possible-move');
+            }
+        }
+
+        function clearSelection() {
+            selectedSquare = null;
+            renderBoard();
+        }
+
+        function makeMove(fromR, fromC, toR, toC) {
+            var piece = board[fromR][fromC];
+            board[fromR][fromC] = '';
+            board[toR][toC] = piece;
+            lastMove = { from: { row: fromR, col: fromC }, to: { row: toR, col: toC } };
+            if (allInGoal(board, 'w')) {
+                isGameOver = true;
+            } else if (allInGoal(board, 'b')) {
+                isGameOver = true;
+            }
+            currentTurn = currentTurn === 'w' ? 'b' : 'w';
+            saveState();
+            renderBoard();
+        }
+
+        function saveState() {
+            gameHistory = gameHistory.slice(0, historyIndex + 1);
+            gameHistory.push({
+                board: cloneBoard(board),
+                currentTurn: currentTurn,
+                lastMove: lastMove,
+                isGameOver: isGameOver
+            });
+            historyIndex++;
+            if (hasAutoSaved) saveGame();
+        }
+
+        function saveGame() {
+            if (gameHistory.length === 0) return;
+            saveJSON('cornersSave', { gameHistory: gameHistory, historyIndex: historyIndex });
+        }
+
+        function restoreState(idx) {
+            if (idx < 0 || idx >= gameHistory.length) return;
+            historyIndex = idx;
+            var s = gameHistory[idx];
+            board = cloneBoard(s.board);
+            currentTurn = s.currentTurn;
+            lastMove = s.lastMove;
+            isGameOver = s.isGameOver;
+            selectedSquare = null;
+            renderBoard();
+        }
+
+        function updateStatus() {
+            var wGoal = countInGoal(board, 'w');
+            var bGoal = countInGoal(board, 'b');
+            var scoreText = 'W ' + wGoal + ' – ' + bGoal + ' B';
+
+            if (isGameOver) {
+                var text = allInGoal(board, 'w') ? 'White wins!' : (allInGoal(board, 'b') ? 'Black wins!' : '');
+                if (statusElements[0]) statusElements[0].textContent = text;
+                if (statusElements[1]) statusElements[1].textContent = text;
+            } else {
+                if (currentTurn === 'w') {
+                    if (statusElements[0]) statusElements[0].textContent = 'White to move';
+                    if (statusElements[1]) statusElements[1].textContent = 'Your move';
+                } else {
+                    if (statusElements[0]) statusElements[0].textContent = 'Your move';
+                    if (statusElements[1]) statusElements[1].textContent = 'Black to move';
+                }
+            }
+
+            if (scoreElements[0]) {
+                scoreElements[0].textContent = scoreText;
+                scoreElements[0].classList.remove('score-leading', 'score-losing');
+                if (bGoal > wGoal) scoreElements[0].classList.add('score-leading');
+                else if (bGoal < wGoal) scoreElements[0].classList.add('score-losing');
+            }
+            if (scoreElements[1]) {
+                scoreElements[1].textContent = scoreText;
+                scoreElements[1].classList.remove('score-leading', 'score-losing');
+                if (wGoal > bGoal) scoreElements[1].classList.add('score-leading');
+                else if (wGoal < bGoal) scoreElements[1].classList.add('score-losing');
+            }
+        }
+
+        function updateButtons() {
+            updateHistoryButtons(['backBtn', 'backBtnBottom'], ['forwardBtn', 'forwardBtnBottom'], historyIndex, gameHistory.length, { isGameOver: isGameOver });
+        }
+
+        function startNewGame() {
+            initBoardState();
+            currentTurn = 'w';
+            gameHistory = [];
+            historyIndex = -1;
+            lastMove = null;
+            isGameOver = false;
+            selectedSquare = null;
+            clearSaved('cornersSave');
+            saveState();
+            renderBoard();
+            refreshEink();
+        }
+
+        runOnReady(function() {
+            boardElement = document.getElementById('board');
+            statusElements = [document.getElementById('status'), document.getElementById('statusBottom')];
+            scoreElements = [document.getElementById('scoreTop'), document.getElementById('scoreBottom')];
+            initBoardState();
+            initBoard();
+            renderBoard();
+
+            bindButton('backBtn', function() { if (historyIndex > 0) { restoreState(historyIndex - 1); updateButtons(); } });
+            bindButton('backBtnBottom', function() { if (historyIndex > 0) { restoreState(historyIndex - 1); updateButtons(); } });
+            bindButton('forwardBtn', function() {
+                if (this.classList.contains('btn-new')) startNewGame();
+                else if (historyIndex < gameHistory.length - 1) { restoreState(historyIndex + 1); updateButtons(); }
+            });
+            bindButton('forwardBtnBottom', function() {
+                if (this.classList.contains('btn-new')) startNewGame();
+                else if (historyIndex < gameHistory.length - 1) { restoreState(historyIndex + 1); updateButtons(); }
+            });
+
+            function loadGame() {
+                var data = loadJSON('cornersSave');
+                if (!data) return false;
+                gameHistory = data.gameHistory || [];
+                historyIndex = data.historyIndex != null ? data.historyIndex : gameHistory.length - 1;
+                if (gameHistory.length > 0) {
+                    var s = gameHistory[historyIndex];
+                    board = cloneBoard(s.board);
+                    currentTurn = s.currentTurn;
+                    lastMove = s.lastMove;
+                    isGameOver = s.isGameOver;
+                }
+                renderBoard();
+                return true;
+            }
+
+            function hasSave() {
+                var d = loadJSON('cornersSave');
+                return d && d.gameHistory && d.gameHistory.length > 1;
+            }
+
+            initBackToWelcome('welcomeModal', 'welcomeFooter');
+            runWelcomeFlow({
+                modalId: 'welcomeModal',
+                footerId: 'welcomeFooter',
+                hasSave: hasSave,
+                continueBtnId: 'continueGameBtn',
+                onContinue: function() {
+                    pushStatePlaying();
+                    hideWelcome('welcomeModal', 'welcomeFooter');
+                    initBoardState();
+                    initBoard();
+                    if (loadGame()) { hasAutoSaved = true; refreshEink(); }
+                    else { startNewGame(); hasAutoSaved = true; }
+                },
+                newButtons: [
+                    { id: 'newGameBtn', fn: function() { pushStatePlaying(); hideWelcome('welcomeModal', 'welcomeFooter'); startNewGame(); hasAutoSaved = true; } }
+                ],
+                infoModal: { modalId: 'gameInfoModal', openBtnId: 'gameInfoBtn' }
+            });
+        });
+    </script>
+</body>
+</html>

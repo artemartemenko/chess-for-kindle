@@ -125,6 +125,7 @@
                 <p class="contents-heading">Contents</p>
                 <a href="chess/" class="btn-game">Chess</a>
                 <a href="checkers/" class="btn-game">Checkers</a>
+                <a href="corners/" class="btn-game">Corners</a>
                 <a href="reversi/" class="btn-game">Reversi</a>
                 <a href="peg-solitaire/" class="btn-game">Peg Solitaire</a>
                 <!-- <a href="backgammon/" class="btn-game">Backgammon</a> -->
@@ -141,7 +142,7 @@
                 .then(reg => console.log('SW registered'))
                 .catch(err => console.log('SW error:', err));
         }
-        ['chess/', 'checkers/', 'reversi/', 'peg-solitaire/', 'backgammon/'].forEach(function(path) {
+        ['chess/', 'checkers/', 'reversi/', 'peg-solitaire/', 'corners/', 'backgammon/'].forEach(function(path) {
             fetch(path, { mode: 'same-origin' }).catch(function() {});
         });
     </script>

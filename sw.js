@@ -13,6 +13,7 @@ self.addEventListener('install', event => {
         './checkers/', './checkers/index.html',
         './reversi/', './reversi/index.html',
         './peg-solitaire/', './peg-solitaire/index.html',
+        './corners/', './corners/index.html',
         './backgammon/', './backgammon/index.html',
         './css/games-common.css',
         './js/games-common.js'

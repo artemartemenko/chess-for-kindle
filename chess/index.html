@@ -19,7 +19,13 @@
         <link rel="stylesheet" href="../css/games-common.css">
         <style>
             .square.check { background-color: #cc5555 !important; }
-            .piece svg { width: 70%; height: 70%; }
+            .piece svg { width: 80%; height: 80%; }
+            .piece[data-piece$="P"] svg { width: 80%; height: 80%; }
+            .piece[data-piece$="P"] { padding-top: 12%; }
+            .board.black-turn .piece[data-piece$="P"] { padding-top: 12%; padding-bottom: 0; }
+            .piece[data-piece$="R"] svg { width: 80%; height: 80%; }
+            .piece[data-piece$="R"] { padding-top: 8%; }
+            .board.black-turn .piece[data-piece$="P"] { padding-top: 8%; padding-bottom: 0; }
             .board.black-turn .piece { transform: rotate(180deg); }
             .board.rotation-locked { transform: rotate(0deg) !important; }
             .board.rotation-locked .piece[data-piece^="b"] { transform: rotate(180deg) !important; }
@@ -290,9 +296,19 @@
                     square.dataset.col = col;
                     bindCell(square, handleSquareClick);
 
+                    var coordRank = document.createElement('span');
+                    coordRank.className = 'coord-rank';
+                    square.appendChild(coordRank);
+                    var coordFile = document.createElement('span');
+                    coordFile.className = 'coord-file';
+                    square.appendChild(coordFile);
+
+                    var squareInner = document.createElement('div');
+                    squareInner.className = 'square-inner';
                     var pieceContainer = document.createElement('div');
                     pieceContainer.className = 'piece';
-                    square.appendChild(pieceContainer);
+                    squareInner.appendChild(pieceContainer);
+                    square.appendChild(squareInner);
 
                     boardElement.appendChild(square);
                     squareElements.push(square);
@@ -339,6 +355,11 @@
                         pieceCont.innerHTML = newContent;
                         pieceCont.setAttribute('data-piece', piece || 'empty');
                     }
+
+                    var coordRank = sqEl.querySelector('.coord-rank');
+                    var coordFile = sqEl.querySelector('.coord-file');
+                    coordRank.textContent = col === 0 ? (8 - row).toString() : '';
+                    coordFile.textContent = row === 7 ? String.fromCharCode(97 + col) : '';
                 }
             }
 

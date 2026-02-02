@@ -261,9 +261,25 @@
                     square.dataset.col = col;
                     bindCell(square, handleSquareClick);
 
+                    if (col === 0) {
+                        var coordRank = document.createElement('span');
+                        coordRank.className = 'coord-rank';
+                        coordRank.textContent = (BOARD_SIZE - row).toString();
+                        square.appendChild(coordRank);
+                    }
+                    if (row === BOARD_SIZE - 1) {
+                        var coordFile = document.createElement('span');
+                        coordFile.className = 'coord-file';
+                        coordFile.textContent = String.fromCharCode(97 + col);
+                        square.appendChild(coordFile);
+                    }
+
+                    var squareInner = document.createElement('div');
+                    squareInner.className = 'square-inner';
                     var pieceContainer = document.createElement('div');
                     pieceContainer.className = 'piece';
-                    square.appendChild(pieceContainer);
+                    squareInner.appendChild(pieceContainer);
+                    square.appendChild(squareInner);
 
                     boardElement.appendChild(square);
                     squareElements.push(square);

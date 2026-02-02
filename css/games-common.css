@@ -260,7 +260,35 @@ body.fullscreen-mode .main-column {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
 }
+.square .coord-rank,
+.square .coord-file {
+    position: absolute;
+    font-size: 10px;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+.square .coord-rank { top: 2px; left: 2px; }
+.square .coord-file { bottom: 2px; right: 2px; }
+.square .coord-rank:empty,
+.square .coord-file:empty { display: none; }
+.square.light .coord-rank,
+.square.light .coord-file { color: #2c2c2c; }
+.square.dark .coord-rank,
+.square.dark .coord-file { color: #f0e0c7; }
+.square-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
 .piece {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     display: flex;
