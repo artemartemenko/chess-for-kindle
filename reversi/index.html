@@ -55,6 +55,12 @@
             transform: translateZ(0);
         }
         .piece svg { width: 90%; height: 90%; }
+        .info-center .score,
+        .score-bottom { font-size: 13px; font-weight: bold; line-height: 1.2; margin-top: 2px; color: var(--color-muted); }
+        .info-center .score.score-leading,
+        .score-bottom.score-leading { color: #005500 !important; }
+        .info-center .score.score-losing,
+        .score-bottom.score-losing { color: #aa2222 !important; }
     </style>
 </head>
 <body>
@@ -349,9 +355,19 @@
             }
             if (statusElements[0]) statusElements[0].textContent = statusTop;
             if (statusElements[1]) statusElements[1].textContent = statusBottom;
-            var scoreText = bCount + ' – ' + wCount;
-            if (scoreElements[0]) scoreElements[0].textContent = scoreText;
-            if (scoreElements[1]) scoreElements[1].textContent = scoreText;
+            var scoreText = 'B ' + bCount + ' – ' + wCount + ' W';
+            if (scoreElements[0]) {
+                scoreElements[0].textContent = scoreText;
+                scoreElements[0].classList.remove('score-leading', 'score-losing');
+                if (bCount > wCount) scoreElements[0].classList.add('score-leading');
+                else if (bCount < wCount) scoreElements[0].classList.add('score-losing');
+            }
+            if (scoreElements[1]) {
+                scoreElements[1].textContent = scoreText;
+                scoreElements[1].classList.remove('score-leading', 'score-losing');
+                if (wCount > bCount) scoreElements[1].classList.add('score-leading');
+                else if (wCount < bCount) scoreElements[1].classList.add('score-losing');
+            }
         }
         function updateButtons() {
             updateHistoryButtons(['backBtn', 'backBtnBottom'], ['forwardBtn', 'forwardBtnBottom'], historyIndex, gameHistory.length, { isGameOver: isGameOver });
